@@ -1,0 +1,66 @@
+/*
+ * THEME: every colour, font, radius and size lives here.
+ * Replace these values with the ones from design.md; no other file needs to change.
+ */
+:root {
+  /* Fonts */
+  --font-body: system-ui, -apple-system, "Segoe UI", "Nirmala UI", "Noto Sans", "Noto Sans Devanagari",
+    "Noto Sans Gujarati", Roboto, sans-serif;
+  --font-heading: var(--font-body);
+
+  /* Brand */
+  --color-primary: #0f766e;
+  --color-primary-hover: #115e59;
+  --color-on-primary: #ffffff;
+  --color-primary-soft: #e6f4f2;
+
+  /* Surfaces & text */
+  --color-bg: #f7f8f7;
+  --color-surface: #ffffff;
+  --color-border: #dfe3e1;
+  --color-text: #1b1f1e;
+  --color-text-muted: #55605d;
+
+  /* Status (warnings, lab values) */
+  --color-urgent: #b42318;
+  --color-urgent-soft: #fdecea;
+  --color-check: #a15c07;
+  --color-check-soft: #fff4e0;
+  --color-info: #175cd3;
+  --color-info-soft: #eaf1fd;
+  --color-normal: #067647;
+  --color-normal-soft: #e7f6ee;
+
+  /* Shape & scale: large by default so it is easy to read */
+  --radius: 14px;
+  --radius-sm: 10px;
+  --text-base: 18px;
+  --text-lg: 21px;
+  --text-xl: 26px;
+  --text-sm: 16px;
+  --tap: 56px; /* minimum height of anything you can press */
+  --shadow: 0 1px 2px rgb(16 24 40 / 6%), 0 2px 8px rgb(16 24 40 / 6%);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-primary: #2dd4bf;
+    --color-primary-hover: #5eead4;
+    --color-on-primary: #04211e;
+    --color-primary-soft: #0f2e2b;
+    --color-bg: #0f1312;
+    --color-surface: #171c1b;
+    --color-border: #2a3230;
+    --color-text: #eef2f1;
+    --color-text-muted: #a5b0ad;
+    --color-urgent: #f97066;
+    --color-urgent-soft: #3a1714;
+    --color-check: #fdb022;
+    --color-check-soft: #33240b;
+    --color-info: #84adff;
+    --color-info-soft: #14213d;
+    --color-normal: #47cd89;
+    --color-normal-soft: #0f2a1d;
+    --shadow: none;
+  }
+}
