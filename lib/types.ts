@@ -22,7 +22,8 @@ export interface LabResult {
   normal_range: string;
   ref_low: number | null;
   ref_high: number | null;
-  status: "normal" | "high" | "low" | "critical";
+  lab_critical: boolean;
+  status: "normal" | "high" | "low" | "critical" | "unknown";
   meaning: string;
 }
 
@@ -45,6 +46,7 @@ export interface Explanation {
 export interface ExplainResponse {
   result?: Explanation;
   model?: string;
+  safety?: { removed: number };
   error?: string;
 }
 

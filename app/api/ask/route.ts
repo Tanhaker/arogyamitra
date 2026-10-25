@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { GemmaError, generate, type Turn } from "@/lib/gemma";
 import { askPrompt } from "@/lib/prompt";
+import { scrub, type SafetyLog } from "@/lib/safety";
 import type { ChatMessage, Lang } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -30,7 +31,10 @@ export async function POST(req: Request) {
   const contents: Turn[] = messages.map((m) => ({ role: m.role, parts: [{ text: m.text }] }));
   try {
     const { text, model } = await generate(askPrompt(lang, report), contents);
-    return NextResponse.json({ answer: text.trim(), model });
+    const log: SafetyLog = { removed: 0 };
+    const answer = scrub(text.trim(), lang, log);
+    if (log.removed) console.warn(`[safety] removed ${log.removed} unsafe sentence(s) from answer`);
+    return NextResponse.json({ answer, model, safety: log });
   } catch (e) {
     const busy = e instanceof GemmaError && e.status === 429;
     return NextResponse.json({ error: busy ? "busy" : "model_error" }, { status: busy ? 429 : 502 });

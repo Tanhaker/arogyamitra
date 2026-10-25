@@ -52,16 +52,33 @@ function labResult(v: unknown): LabResult | null {
   const r = (v ?? {}) as Record<string, unknown>;
   const test = str(r.test);
   if (!test) return null;
+  const normal_range = str(r.normal_range);
+  const value_num = num(r.value_num);
+  // Safety: never use a reference range the report does not print.
+  const ref_low = normal_range ? num(r.ref_low) : null;
+  const ref_high = normal_range ? num(r.ref_high) : null;
+  const lab_critical = r.lab_critical === true;
+  let status = pick(r.status, ["normal", "high", "low", "critical", "unknown"] as const, "unknown");
+  if (lab_critical) {
+    status = "critical";
+  } else if (status === "critical") {
+    // Safety: "critical" is reserved for values the lab itself marks critical.
+    status =
+      value_num !== null && ref_high !== null && value_num > ref_high ? "high"
+      : value_num !== null && ref_low !== null && value_num < ref_low ? "low"
+      : "unknown";
+  }
   return {
     test,
     test_key: str(r.test_key) || test,
     value: str(r.value),
-    value_num: num(r.value_num),
+    value_num,
     unit: str(r.unit),
-    normal_range: str(r.normal_range),
-    ref_low: num(r.ref_low),
-    ref_high: num(r.ref_high),
-    status: pick(r.status, ["normal", "high", "low", "critical"] as const, "normal"),
+    normal_range,
+    ref_low,
+    ref_high,
+    lab_critical,
+    status,
     meaning: str(r.meaning),
   };
 }
@@ -85,9 +102,12 @@ export function normalize(raw: unknown): Explanation {
     doctor_questions: arr(o.doctor_questions).map(str).filter(Boolean),
     unclear: arr(o.unclear).map(str).filter(Boolean),
   };
-  // A critical lab value must always surface as an urgent warning, even if the model forgot one.
+  // Safety: "urgent" is only for lab-designated critical results, and those must always show one.
   // Empty text means "use the UI's default urgent message" (it is translated there).
-  if (result.lab_results.some((r) => r.status === "critical") && !result.warnings.some((w) => w.level === "urgent")) {
+  const hasCritical = result.lab_results.some((r) => r.status === "critical");
+  if (!hasCritical) {
+    result.warnings = result.warnings.map((w) => (w.level === "urgent" ? { ...w, level: "check" } : w));
+  } else if (!result.warnings.some((w) => w.level === "urgent")) {
     result.warnings.unshift({ level: "urgent", text: "" });
   }
   const order = { urgent: 0, check: 1, info: 2 };

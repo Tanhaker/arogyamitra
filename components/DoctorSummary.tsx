@@ -107,7 +107,9 @@ export default function DoctorSummary({ data, lang, t }: { data: Explanation; la
       <h2>{t.doctor.notes}</h2>
       <div className="doc-notes" />
 
-      <p className="doc-foot">{t.disclaimer}</p>
+      <p className="doc-foot">
+        {t.safetyNotice} {t.disclaimer}
+      </p>
     </div>
   );
 }

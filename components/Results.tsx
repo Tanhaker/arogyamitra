@@ -32,6 +32,10 @@ export default function Results({ data, t }: { data: Explanation; t: Strings }) 
         </section>
       )}
 
+      <div className="safety-note" role="note">
+        ℹ️ {t.safetyNotice}
+      </div>
+
       {data.summary && (
         <section className="card">
           <h2 className="section-title">{t.summary}</h2>

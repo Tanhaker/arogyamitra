@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { GemmaError, generate } from "@/lib/gemma";
 import { normalize, parseJson } from "@/lib/normalize";
 import { USER_PROMPT, systemPrompt } from "@/lib/prompt";
+import { applySafety } from "@/lib/safety";
 import type { ExplainResponse, Lang } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -43,7 +44,9 @@ export async function POST(req: Request) {
       return fail("unreadable_answer", 502);
     }
     // Images are never stored: the photo only lives for the duration of this request.
-    return NextResponse.json<ExplainResponse>({ result: normalize(raw), model });
+    const { result, removed } = applySafety(normalize(raw), lang);
+    if (removed) console.warn(`[safety] removed ${removed} unsafe sentence(s) from explanation`);
+    return NextResponse.json<ExplainResponse>({ result, model, safety: { removed } });
   } catch (e) {
     const status = e instanceof GemmaError ? e.status : 502;
     return fail(status === 429 ? "busy" : "model_error", status === 429 ? 429 : 502);
