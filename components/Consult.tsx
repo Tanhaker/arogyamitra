@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { IconDownload } from "@/components/Icons";
 import type { CategoryKey, ConsultInput, ConsultResult, Understood } from "@/lib/consult";
 import type { Strings } from "@/lib/i18n";
 import { formatDate } from "@/lib/storage";
@@ -108,7 +109,7 @@ export default function Consult({ lang, t, report, onBack }: {
   if (!result) {
     return (
       <>
-        <h1 className="page-title">🩺 {c.title}</h1>
+        <h1 className="page-title">{c.title}</h1>
         {error && (
           <div className="error" role="alert">
             {error}
@@ -141,7 +142,7 @@ export default function Consult({ lang, t, report, onBack }: {
             <input className="ask-input" value={input.allergies} maxLength={300}
               onChange={(e) => setInput({ ...input, allergies: e.target.value })} />
           </label>
-          {report && <p className="muted" style={{ margin: 0 }}>📎 {c.reportAttached}</p>}
+          {report && <p className="muted" style={{ margin: 0 }}>{c.reportAttached}</p>}
           <button className="btn btn-accent" disabled={busy || (!input.concern.trim() && !report)}
             onClick={() => generate(input)}>
             {c.submit}
@@ -193,7 +194,7 @@ export default function Consult({ lang, t, report, onBack }: {
         )}
 
         <section className="card">
-          <h2 className="section-title">🩺 {c.title}</h2>
+          <h2 className="section-title">{c.title}</h2>
           <p className="muted" style={{ marginTop: -6 }}>
             {c.hint}
           </p>
@@ -256,10 +257,10 @@ export default function Consult({ lang, t, report, onBack }: {
 
         <div className="stack">
           <button className="btn btn-accent" onClick={() => window.print()} disabled={!selected.length}>
-            📄 {c.download}
+            <IconDownload /> {c.download}
           </button>
           <button className="btn btn-secondary" onClick={copy} disabled={!selected.length}>
-            {copied ? `✅ ${c.copied}` : `📋 ${c.copy}`}
+            {copied ? c.copied : c.copy}
           </button>
           <button className="btn btn-secondary" onClick={() => {
             setResult(null);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { IconCamera, IconChart, IconChat, IconDownload, IconFolder, IconImage, IconStethoscope } from "@/components/Icons";
 import { logOut } from "@/app/actions";
 import AskReport from "@/components/AskReport";
 import Consult from "@/components/Consult";
@@ -188,10 +189,10 @@ export default function Dashboard({ user }: { user: DashboardUser }) {
               ) : (
                 <div className="btn-row">
                   <button className="btn btn-accent" onClick={() => cameraRef.current?.click()}>
-                    📷 {t.takePhoto}
+                    <IconCamera /> {t.takePhoto}
                   </button>
                   <button className="btn btn-secondary" onClick={() => galleryRef.current?.click()}>
-                    🖼️ {t.choosePhoto}
+                    <IconImage /> {t.choosePhoto}
                   </button>
                 </div>
               )}
@@ -201,7 +202,7 @@ export default function Dashboard({ user }: { user: DashboardUser }) {
             </section>
 
             <section className="card">
-              <h2 className="step-title">💬 {t.consult.cardTitle}</h2>
+              <h2 className="step-title"><span className="step-num"><IconChat size={18} /></span>{t.consult.cardTitle}</h2>
               <p className="muted" style={{ marginTop: -4 }}>
                 {t.consult.cardHint}
               </p>
@@ -218,7 +219,7 @@ export default function Dashboard({ user }: { user: DashboardUser }) {
 
             {saved.length > 0 && (
               <button className="btn btn-secondary" onClick={() => go("history")}>
-                📁 {t.history.open} ({saved.length})
+                <IconFolder /> {t.history.open} ({saved.length})
               </button>
             )}
           </>
@@ -248,14 +249,14 @@ export default function Dashboard({ user }: { user: DashboardUser }) {
                       go("consult");
                     }}
                   >
-                    🩺 {t.consult.fromReport}
+                    <IconStethoscope /> {t.consult.fromReport}
                   </button>
                   <button className="btn btn-secondary" onClick={() => window.print()}>
-                    📄 {t.doctor.download}
+                    <IconDownload /> {t.doctor.download}
                   </button>
                   {result.document_type === "lab_report" && labReports.length >= 2 && (
                     <button className="btn btn-secondary" onClick={() => go("trends")}>
-                      📈 {t.trends.title}
+                      <IconChart /> {t.trends.title}
                     </button>
                   )}
                   <button className="btn btn-primary" onClick={startOver}>
@@ -274,11 +275,11 @@ export default function Dashboard({ user }: { user: DashboardUser }) {
 
         {stage === "history" && (
           <>
-            <h1 className="page-title">📁 {t.history.title}</h1>
-            <p className="muted">🔒 {t.history.savedNote}</p>
+            <h1 className="page-title">{t.history.title}</h1>
+            <p className="muted">{t.history.savedNote}</p>
             {labReports.length >= 2 && (
               <button className="btn btn-primary" style={{ marginBottom: 16 }} onClick={() => go("trends")}>
-                📈 {t.trends.title}
+                <IconChart /> {t.trends.title}
               </button>
             )}
             {saved.length === 0 && <p>{t.history.empty}</p>}

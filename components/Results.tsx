@@ -77,7 +77,7 @@ export default function Results({ data, t }: { data: Explanation; t: Strings }) 
           <h2 className="section-title">{t.medicines}</h2>
           {data.medicines.map((m, i) => (
             <div key={i} className="med">
-              <div className="med-name">💊 {m.name}</div>
+              <div className="med-name">{m.name}</div>
               {m.purpose && <div>{m.purpose}</div>}
               <div className="med-facts">
                 {m.dose && (

@@ -50,7 +50,9 @@
   --text-xl: 26px;
   --text-sm: 16px;
   --tap: 56px; /* minimum height of anything you can press */
-  --shadow: 0 1px 2px rgb(30 41 59 / 6%), 0 2px 8px rgb(30 41 59 / 6%);
+  /* Shadows tinted with the brand teal, one light source from above */
+  --shadow: 0 1px 2px rgb(22 74 84 / 6%), 0 4px 14px -4px rgb(22 74 84 / 10%);
+  --shadow-lg: 0 2px 4px rgb(22 74 84 / 5%), 0 24px 48px -16px rgb(22 74 84 / 22%);
 }
 
 :root[data-theme="dark"] {
@@ -82,5 +84,6 @@
   --color-normal: #47cd89;
   --color-normal-soft: #123327;
 
-  --shadow: none;
+  --shadow: 0 1px 0 rgb(255 255 255 / 4%) inset, 0 6px 16px -6px rgb(0 0 0 / 50%);
+  --shadow-lg: 0 1px 0 rgb(255 255 255 / 5%) inset, 0 28px 56px -20px rgb(0 0 0 / 70%);
 }

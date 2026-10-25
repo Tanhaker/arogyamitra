@@ -87,7 +87,7 @@ export default function Trends({ reports, lang, t }: { reports: SavedReport[]; l
   if (!series.length) {
     return (
       <section className="card">
-        <h2 className="section-title">📈 {t.trends.title}</h2>
+        <h2 className="section-title">{t.trends.title}</h2>
         <p style={{ margin: 0 }}>{t.trends.needTwo}</p>
       </section>
     );
@@ -95,7 +95,7 @@ export default function Trends({ reports, lang, t }: { reports: SavedReport[]; l
 
   return (
     <section className="card">
-      <h2 className="section-title">📈 {t.trends.title}</h2>
+      <h2 className="section-title">{t.trends.title}</h2>
       <p className="muted" style={{ marginTop: -6 }}>
         {t.trends.hint}
       </p>

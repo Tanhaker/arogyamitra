@@ -41,7 +41,7 @@ export default function AskReport({ report, lang, t }: { report: Explanation; la
 
   return (
     <section className="card">
-      <h2 className="section-title">💬 {t.ask.title}</h2>
+      <h2 className="section-title">{t.ask.title}</h2>
       <p className="muted" style={{ marginTop: -6 }}>
         {t.ask.hint}
       </p>

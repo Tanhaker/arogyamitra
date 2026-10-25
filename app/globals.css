@@ -140,6 +140,7 @@ button {
 
 /* Buttons */
 .btn {
+  transition: background-color 0.2s, border-color 0.2s, color 0.2s, transform 0.15s, box-shadow 0.2s;
   width: 100%;
   min-height: var(--tap);
   border-radius: var(--radius-sm);
@@ -717,4 +718,46 @@ strong {
   height: 22px;
   margin-top: 3px;
   accent-color: var(--color-primary);
+}
+
+/* Tactile feedback on everything pressable */
+.btn:active:not(:disabled),
+.lang-btn:active,
+.chip-btn:active,
+.logout-btn:active,
+.theme-toggle:active {
+  transform: translateY(1px) scale(0.985);
+}
+.btn-accent:not(:disabled) {
+  box-shadow: 0 8px 20px -10px color-mix(in srgb, var(--color-accent) 80%, transparent);
+}
+.lang-btn,
+.chip-btn,
+.logout-btn,
+.theme-toggle {
+  transition: background-color 0.2s, border-color 0.2s, transform 0.15s;
+}
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+
+/* Barely-there grain so flat surfaces don't feel sterile */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media print {
+  body::before {
+    display: none;
+  }
 }
