@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AarogyaMitra brand board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 1600px; height: 800px; background: #f7f5f0; font-family: Poppins, sans-serif; padding: 16px;
+    display: grid; grid-template-columns: 800px 1fr; grid-template-rows: 552px 1fr; gap: 16px; }
+  .panel { border-radius: 18px; background: #f2efe8; position: relative; overflow: hidden; }
+  .hero { display: flex; flex-direction: column; align-items: center; justify-content: center; background: #f1eee7; }
+  .hero svg { width: 250px; }
+  .word { font-weight: 600; letter-spacing: -0.01em; line-height: 1; }
+  .a { color: #245b78; } .b { color: #e76f51; }
+  .tag { letter-spacing: 0.32em; text-transform: uppercase; color: #5a6b78; font-weight: 500; }
+  .hero .word { font-size: 88px; margin-top: 16px; }
+  .hero .tag { font-size: 22px; margin-top: 14px; }
+  .right { display: grid; grid-template-rows: 250px 1fr; gap: 16px; }
+  .navwrap { display: flex; align-items: center; padding: 0 0; background: #f2efe8; }
+  .nav { margin: 0 4px; width: 100%; height: 106px; background: #fff; border-radius: 14px; display: flex; align-items: center;
+    padding: 0 30px; box-shadow: 0 4px 18px rgb(30 41 59 / 8%); }
+  .nav svg { width: 46px; }
+  .nav .word { font-size: 25px; margin-left: 12px; white-space: nowrap; }
+  .nav .links { margin-left: auto; padding-left: 28px; display: flex; gap: 22px; white-space: nowrap; color: #475569; font-size: 15px; font-weight: 500; }
+  .nav .cta { white-space: nowrap; flex: none; margin-left: 22px; background: #e76f51; color: #fff; font-weight: 600; padding: 15px 24px; border-radius: 10px; font-size: 16px; }
+  .icons { display: flex; align-items: center; justify-content: center; gap: 44px; background: #f7f5f0; }
+  .icon { width: 194px; height: 194px; border-radius: 40px; display: grid; place-items: center; }
+  .icon svg { width: 120px; }
+  .icon.light { background: #f1eee7; }
+  .icon.dark { background: #245b78; }
+  .fav { width: 92px; height: 92px; border-radius: 18px; background: #f1eee7; display: grid; place-items: center; }
+  .fav svg { width: 52px; }
+  .cap { text-align: center; color: #5a6b78; font-size: 17px; margin-top: 14px; }
+  .bottom { grid-column: 1 / -1; display: grid; grid-template-columns: 512px 512px 1fr; gap: 16px; }
+  .lock { display: flex; align-items: center; justify-content: center; gap: 20px; border-radius: 18px; }
+  .lock svg { width: 96px; }
+  .lock .word { font-size: 42px; }
+  .lock .tag { font-size: 13px; margin-top: 10px; letter-spacing: 0.3em; }
+  .l1 { background: #fff; } .l2 { background: #245b78; } .l3 { background: #f2efe8; }
+  .l2 .a, .l2 .tag { color: #fff; } .l2 .tag { opacity: .85; }
+  .l3 .a, .l3 .b { color: #1e293b; } .l3 .tag { color: #1e293b; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="mark" viewBox="20 6 166 196">
+      <circle cx="93" cy="30" r="19" fill="var(--c, #245B78)"/>
+      <path d="M33.5 147 A70 70 0 0 1 137 65.6 L127.5 82.5 C110 72 70 74 55 100 C45 117 38 132 33.5 147 Z" fill="var(--c, #245B78)"/>
+      <circle cx="151" cy="70" r="14" fill="var(--p, #E76F51)"/>
+      <path d="M137 93 C150 84 172 90 170 113 C168 131 158 146 139 157 C149 138 151 117 137 93 Z" fill="var(--p, #E76F51)"/>
+      <path d="M34 150 A70 70 0 0 0 96 195 Q88 158 34 150 Z" fill="var(--l, #7BA89B)"/>
+      <path d="M104 195 A70 70 0 0 0 168 145 Q118 150 104 195 Z" fill="var(--l, #7BA89B)"/>
+      <rect x="91" y="100" width="15" height="45" rx="2.5" fill="var(--x, #E53935)"/>
+      <rect x="76" y="115" width="45" height="15" rx="2.5" fill="var(--x, #E53935)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="panel hero">
+  <svg viewBox="0 0 166 196"><use href="#mark" width="166" height="196"/></svg>
+  <div class="word"><span class="a">Aarogya</span><span class="b">Mitra</span></div>
+  <div class="tag">Your health companion</div>
+</div>
+
+<div class="right">
+  <div class="panel navwrap">
+    <div class="nav">
+      <svg viewBox="0 0 166 196"><use href="#mark" width="166" height="196"/></svg>
+      <div class="word"><span class="a">Aarogya</span><span class="b">Mitra</span></div>
+      <div class="links"><span>Home</span><span>Features</span><span>How It Works</span></div>
+      <div class="cta">Get Started</div>
+    </div>
+  </div>
+  <div class="panel icons">
+    <div>
+      <div style="display:flex;gap:28px">
+        <div class="icon light"><svg viewBox="0 0 166 196"><use href="#mark" width="166" height="196"/></svg></div>
+        <div class="icon dark"><svg viewBox="0 0 166 196" style="--c:#ffffff;--l:#ffffff"><use href="#mark" width="166" height="196"/></svg></div>
+      </div>
+      <div class="cap">App Icon</div>
+    </div>
+    <div>
+      <div class="fav"><svg viewBox="0 0 166 196"><use href="#mark" width="166" height="196"/></svg></div>
+      <div class="cap">Favicon</div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom">
+  <div class="lock l1">
+    <svg viewBox="0 0 166 196"><use href="#mark" width="166" height="196"/></svg>
+    <div><div class="word"><span class="a">Aarogya</span><span class="b">Mitra</span></div><div class="tag">Your health companion</div></div>
+  </div>
+  <div class="lock l2">
+    <svg viewBox="0 0 166 196" style="--c:#ffffff;--l:#ffffff"><use href="#mark" width="166" height="196"/></svg>
+    <div><div class="word"><span class="a">Aarogya</span><span class="b">Mitra</span></div><div class="tag">Your health companion</div></div>
+  </div>
+  <div class="lock l3">
+    <svg viewBox="0 0 166 196" style="--c:#1e293b;--p:#1e293b;--l:#1e293b;--x:#f2efe8"><use href="#mark" width="166" height="196"/></svg>
+    <div><div class="word"><span class="a">Aarogya</span><span class="b">Mitra</span></div><div class="tag">Your health companion</div></div>
+  </div>
+</div>
+</body>
+</html>

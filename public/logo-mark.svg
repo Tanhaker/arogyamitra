@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="20 6 166 196" role="img" aria-label="AarogyaMitra">
+  <!-- Caregiver -->
+  <circle cx="93" cy="30" r="19" fill="#245B78"/>
+  <path d="M33.5 147 A70 70 0 0 1 137 65.6 L127.5 82.5 C110 72 70 74 55 100 C45 117 38 132 33.5 147 Z" fill="#245B78"/>
+  <!-- Patient -->
+  <circle cx="151" cy="70" r="14" fill="#E76F51"/>
+  <path d="M137 93 C150 84 172 90 170 113 C168 131 158 146 139 157 C149 138 151 117 137 93 Z" fill="#E76F51"/>
+  <!-- Leaves (care / growth) -->
+  <path d="M34 150 A70 70 0 0 0 96 195 Q88 158 34 150 Z" fill="#7BA89B"/>
+  <path d="M104 195 A70 70 0 0 0 168 145 Q118 150 104 195 Z" fill="#7BA89B"/>
+  <!-- Medical cross -->
+  <rect x="91" y="100" width="15" height="45" rx="2.5" fill="#E53935"/>
+  <rect x="76" y="115" width="45" height="15" rx="2.5" fill="#E53935"/>
+</svg>

@@ -13,26 +13,32 @@
   --weight-medium: 500;
   --weight-bold: 700;
 
-  /* Brand: primary buttons / links */
-  --color-primary: #2c5e7a;
-  --color-primary-hover: #234b62;
+  /* Brand */
+  --color-primary: #167a8a; /* buttons, links, navigation */
+  --color-primary-hover: #126674;
   --color-on-primary: #ffffff;
-  --color-primary-soft: #e4edf2;
+  --color-primary-soft: #d9f0f2; /* selected cards, backgrounds */
+  --color-accent: #e76f51; /* main call-to-action, highlights */
+  --color-accent-hover: #d65f42;
+  --color-on-accent: #ffffff;
+  --color-accent-soft: #fce3dc;
+  --color-wordmark: #245b78; /* "Aarogya" in the logo */
+  --logo-caregiver: #245b78;
 
   /* Surfaces & text */
-  --color-bg: #f7f5f0; /* app canvas */
-  --color-surface: #ffffff; /* cards, inputs */
-  --color-border: #e3e0d8;
-  --color-text: #1e293b; /* primary text, headings */
-  --color-text-muted: #475569; /* labels, captions */
+  --color-bg: #f7f5f0; /* canvas */
+  --color-surface: #ffffff; /* cards, inputs, modals */
+  --color-border: #e2ded6;
+  --color-text: #1e293b;
+  --color-text-muted: #475569;
 
   /* Status (warnings, lab values) */
   --color-urgent: #b42318;
   --color-urgent-soft: #fdecea;
   --color-check: #a15c07;
   --color-check-soft: #fff4e0;
-  --color-info: #2c5e7a;
-  --color-info-soft: #e4edf2;
+  --color-info: #167a8a;
+  --color-info-soft: #d9f0f2;
   --color-normal: #067647;
   --color-normal-soft: #e7f6ee;
 
@@ -50,12 +56,18 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --color-primary: #5d9cbb;
-  --color-primary-hover: #7fb3cd;
-  --color-on-primary: #0f1b24;
-  --color-primary-soft: #1b3445;
+  --color-primary: #2aa6b5;
+  --color-primary-hover: #39b8c6;
+  --color-on-primary: #0f172a;
+  --color-primary-soft: #123e46;
+  --color-accent: #f58a70;
+  --color-accent-hover: #f79d87;
+  --color-on-accent: #0f172a;
+  --color-accent-soft: #4a2722;
+  --color-wordmark: #f1f5f9;
+  --logo-caregiver: #f1f5f9;
 
-  --color-bg: #111827;
+  --color-bg: #0f172a;
   --color-surface: #1e293b;
   --color-border: #334155;
   --color-text: #f1f5f9;
@@ -65,8 +77,8 @@
   --color-urgent-soft: #3b1a1d;
   --color-check: #fdb022;
   --color-check-soft: #3a2a10;
-  --color-info: #5d9cbb;
-  --color-info-soft: #1b3445;
+  --color-info: #2aa6b5;
+  --color-info-soft: #123e46;
   --color-normal: #47cd89;
   --color-normal-soft: #123327;
 

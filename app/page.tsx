@@ -155,7 +155,7 @@ export default function Home() {
                 <div className="stack">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={image} alt="" className="preview" />
-                  <button className="btn btn-primary" onClick={explain}>
+                  <button className="btn btn-accent" onClick={explain}>
                     {t.explain}
                   </button>
                   <button className="btn btn-secondary" onClick={() => galleryRef.current?.click()}>
@@ -164,7 +164,7 @@ export default function Home() {
                 </div>
               ) : (
                 <div className="btn-row">
-                  <button className="btn btn-primary" onClick={() => cameraRef.current?.click()}>
+                  <button className="btn btn-accent" onClick={() => cameraRef.current?.click()}>
                     📷 {t.takePhoto}
                   </button>
                   <button className="btn btn-secondary" onClick={() => galleryRef.current?.click()}>
