@@ -47,23 +47,20 @@ export default function Results({ data, t }: { data: Explanation; t: Strings }) 
           <div className="timetable">
             {SLOTS.map(({ key, icon }) => {
               const meds = scheduled.filter((m) => m.when.includes(key));
+              if (!meds.length) return null;
               return (
                 <div key={key} className="slot">
                   <div className="slot-head">
                     {icon} {t[key]}
                   </div>
-                  {meds.length ? (
-                    <ul>
-                      {meds.map((m, i) => (
-                        <li key={i}>
-                          {m.name}
-                          {m.food && m.food !== "any" ? ` · ${t.food[m.food]}` : ""}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <div className="slot-empty">-</div>
-                  )}
+                  <ul>
+                    {meds.map((m, i) => (
+                      <li key={i}>
+                        {m.name}
+                        {m.food && m.food !== "any" ? ` · ${t.food[m.food]}` : ""}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               );
             })}
