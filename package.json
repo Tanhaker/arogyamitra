@@ -1,8 +1,8 @@
 {
-  "name": "saathi",
+  "name": "aarogyamitra",
   "version": "0.1.0",
   "private": true,
-  "description": "Saathi - understand your prescription and lab report in your language, powered by Gemma 4.",
+  "description": "AarogyaMitra - understand your prescription and lab report in your language, powered by Gemma 4.",
   "license": "MIT",
   "scripts": {
     "dev": "next dev",

@@ -5,7 +5,7 @@ export default function Logo() {
       <span className="logo-mark" aria-hidden="true">
         ✚
       </span>
-      Saathi
+      AarogyaMitra
     </div>
   );
 }

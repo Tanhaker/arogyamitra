@@ -3,7 +3,7 @@ import "./theme.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Saathi: understand your prescription",
+  title: "AarogyaMitra: understand your prescription",
   description: "Photograph a prescription or lab report and understand it in English, Hindi or Gujarati. Powered by Gemma 4.",
 };
 
