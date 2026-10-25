@@ -5,7 +5,7 @@ import "./theme.css";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AarogyaMitra: understand your prescription",
+  title: "ArogyaMitra: understand your prescription",
   description: "Photograph a prescription or lab report and understand it in English, Hindi or Gujarati. Powered by Gemma 4.",
 };
 

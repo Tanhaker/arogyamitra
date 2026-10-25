@@ -1,8 +1,8 @@
 {
-  "name": "aarogyamitra",
+  "name": "arogyamitra",
   "version": "0.1.0",
   "private": true,
-  "description": "AarogyaMitra - understand your prescription and lab report in your language, powered by Gemma 4.",
+  "description": "ArogyaMitra - understand your prescription and lab report in your language, powered by Gemma 4.",
   "license": "MIT",
   "scripts": {
     "dev": "next dev",
@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "next": "^15.3.0",
+    "next-auth": "^5.0.0-beta.29",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

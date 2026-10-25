@@ -21,7 +21,7 @@ export default function Logo() {
       <LogoMark />
       <span className="logo-text">
         <span className="logo-word">
-          <span className="logo-a">Aarogya</span>
+          <span className="logo-a">Arogya</span>
           <span className="logo-b">Mitra</span>
         </span>
         <span className="logo-tag">Your health companion</span>

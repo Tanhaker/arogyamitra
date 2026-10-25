@@ -1,283 +1,156 @@
-"use client";
+import type { Metadata } from "next";
+import { LogoMark } from "@/components/Logo";
+import GetStarted from "@/components/GetStarted";
+import SiteFooter from "@/components/SiteFooter";
+import SiteHeader from "@/components/SiteHeader";
+import "./home.css";
 
-import { useEffect, useRef, useState } from "react";
-import AskReport from "@/components/AskReport";
-import DoctorSummary from "@/components/DoctorSummary";
-import Logo from "@/components/Logo";
-import Results from "@/components/Results";
-import ThemeToggle from "@/components/ThemeToggle";
-import Trends from "@/components/Trends";
-import { LANGS, STRINGS } from "@/lib/i18n";
-import { fileToDataUrl } from "@/lib/image";
-import { deleteReport, formatDate, loadReports, reportDate, saveReport } from "@/lib/storage";
-import type { Explanation, ExplainResponse, Lang, SavedReport } from "@/lib/types";
+export const metadata: Metadata = {
+  title: "ArogyaMitra: a health guide, right by your side",
+  description:
+    "Understand your health information in Gujarati, Hindi or English and prepare clear summaries for your doctor. Powered by Gemma 4.",
+};
 
-type Stage = "start" | "loading" | "done" | "history" | "trends";
+const AUTH_MESSAGES: Record<string, string> = {
+  SessionRequired: "Please sign in with Google to continue.",
+  AccessDenied: "Sign-in was cancelled. You can try again whenever you're ready.",
+  OAuthCallbackError: "Sign-in was cancelled or did not finish. Please try again.",
+  Configuration: "Google sign-in is not set up yet on this server. Please try again later.",
+};
 
-export default function Home() {
-  const [lang, setLang] = useState<Lang>("en");
-  const [image, setImage] = useState<string | null>(null);
-  const [stage, setStage] = useState<Stage>("start");
-  const [result, setResult] = useState<Explanation | null>(null);
-  const [model, setModel] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [saved, setSaved] = useState<SavedReport[]>([]);
-  const cameraRef = useRef<HTMLInputElement>(null);
-  const galleryRef = useRef<HTMLInputElement>(null);
-  const t = STRINGS[lang];
+const STEPS = [
+  {
+    icon: "🗣️",
+    title: "Share Your Health Concerns",
+    text: "Describe your symptoms or health concerns in your preferred language: Gujarati, Hindi or English.",
+  },
+  {
+    icon: "🧠",
+    title: "AI Understands Your Information",
+    text: "Powered by Gemma, ArogyaMitra organises details such as symptoms, duration, age, medicines and allergies, and asks follow-up questions if something important is missing.",
+  },
+  {
+    icon: "📋",
+    title: "Get a Structured Health Summary",
+    text: "Receive a clear, organised summary of your health concerns that you can review and share with a qualified healthcare professional.",
+  },
+];
 
-  const labReports = saved.filter((r) => r.result.document_type === "lab_report");
+const FEATURES = [
+  { icon: "🌐", title: "Multilingual Understanding", text: "Communicate naturally in Gujarati, Hindi and English." },
+  { icon: "🔍", title: "Smart Information Extraction", text: "Identify and organise symptoms, duration and relevant health details." },
+  { icon: "✨", title: "AI-Powered Summaries", text: "Convert unstructured descriptions into clear, structured summaries." },
+  { icon: "❓", title: "Missing Information Detection", text: "Ask follow-up questions when important information is missing." },
+  { icon: "📄", title: "Doctor-Ready Reports", text: "Generate downloadable summaries to share with healthcare professionals." },
+  { icon: "🔒", title: "Personal Health Information", text: "Help you organise the information you provide during your interaction, privately to your account." },
+];
 
-  useEffect(() => {
-    setSaved(loadReports());
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.lang = lang;
-  }, [lang]);
-
-  function go(next: Stage) {
-    setStage(next);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  async function onFile(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file) return;
-    setError(null);
-    try {
-      setImage(await fileToDataUrl(file));
-    } catch {
-      setError(t.errors.bad_image);
-    }
-  }
-
-  async function explain() {
-    if (!image) return;
-    setStage("loading");
-    setError(null);
-    try {
-      const res = await fetch("/api/explain", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ image, lang }),
-      });
-      const data: ExplainResponse = await res.json().catch(() => ({ error: "generic" }));
-      if (!res.ok || !data.result) {
-        const key = (data.error ?? "generic") as keyof typeof t.errors;
-        setError(t.errors[key] ?? t.errors.generic);
-        setStage("start");
-        return;
-      }
-      setResult(data.result);
-      setModel(data.model ?? "");
-      if (data.result.document_type !== "other") {
-        saveReport(data.result);
-        setSaved(loadReports());
-      }
-      go("done");
-    } catch {
-      setError(t.errors.generic);
-      setStage("start");
-    }
-  }
-
-  function startOver() {
-    setImage(null);
-    setResult(null);
-    setError(null);
-    go("start");
-  }
-
-  function openSaved(r: SavedReport) {
-    setResult(r.result);
-    setModel("");
-    go("done");
-  }
-
-  function removeSaved(id: string) {
-    deleteReport(id);
-    setSaved(loadReports());
-  }
-
-  const typeLabel = (r: SavedReport) =>
-    r.result.document_type === "lab_report"
-      ? t.history.labReport
-      : r.result.document_type === "prescription"
-        ? t.history.prescription
-        : t.history.other;
+export default async function HomePage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
+  const { error } = await searchParams;
+  const authMessage = error ? (AUTH_MESSAGES[error] ?? "Sign-in did not complete. Please try again.") : null;
 
   return (
-    <>
-      <main className="page screen-only">
-        <header className="header">
-          <button className="logo-btn" onClick={startOver} aria-label="AarogyaMitra">
-            <Logo />
-          </button>
-          <ThemeToggle labels={{ light: t.themeLight, dark: t.themeDark }} />
-        </header>
+    <div className="home">
+      <SiteHeader />
 
-        {stage === "start" && (
-          <>
-            <p className="tagline">{t.tagline}</p>
-
-            {error && (
-              <div className="error" role="alert">
-                {error}
+      <main>
+        <section id="home" className="hero">
+          <div className="home-wrap hero-inner">
+            {authMessage && (
+              <div className="auth-message" role="alert">
+                {authMessage}
               </div>
             )}
-
-            <section className="card">
-              <h2 className="step-title">
-                <span className="step-num">1</span>
-                {t.step1}
-              </h2>
-              <div className="lang-row" role="group" aria-label={t.step1}>
-                {LANGS.map((l) => (
-                  <button key={l} className="lang-btn" aria-pressed={lang === l} onClick={() => setLang(l)}>
-                    {STRINGS[l].langName}
-                  </button>
-                ))}
-              </div>
-            </section>
-
-            <section className="card">
-              <h2 className="step-title">
-                <span className="step-num">2</span>
-                {t.step2}
-              </h2>
-
-              <input ref={cameraRef} type="file" accept="image/*" capture="environment" hidden onChange={onFile} />
-              <input ref={galleryRef} type="file" accept="image/*" hidden onChange={onFile} />
-
-              {image ? (
-                <div className="stack">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={image} alt="" className="preview" />
-                  <button className="btn btn-accent" onClick={explain}>
-                    {t.explain}
-                  </button>
-                  <button className="btn btn-secondary" onClick={() => galleryRef.current?.click()}>
-                    {t.changePhoto}
-                  </button>
-                </div>
-              ) : (
-                <div className="btn-row">
-                  <button className="btn btn-accent" onClick={() => cameraRef.current?.click()}>
-                    📷 {t.takePhoto}
-                  </button>
-                  <button className="btn btn-secondary" onClick={() => galleryRef.current?.click()}>
-                    🖼️ {t.choosePhoto}
-                  </button>
-                </div>
-              )}
-              <p className="muted center" style={{ marginBottom: 0 }}>
-                🔒 {t.privacy}
-              </p>
-            </section>
-
-            {saved.length > 0 && (
-              <button className="btn btn-secondary" onClick={() => go("history")}>
-                📁 {t.history.open} ({saved.length})
-              </button>
-            )}
-          </>
-        )}
-
-        {stage === "loading" && (
-          <section className="card center" aria-live="polite" aria-busy="true">
-            <div className="spinner" />
-            <h2 className="section-title">{t.loadingTitle}</h2>
-            <p className="muted" style={{ margin: 0 }}>
-              {t.loadingHint}
+            <div className="hero-mark">
+              <LogoMark size={84} />
+            </div>
+            <h1 className="hero-title">A Health Guide, Right by Your Side!</h1>
+            <p className="hero-text">
+              Health information made easier to understand. ArogyaMitra helps you organize your health concerns,
+              understand important medical information and prepare meaningful summaries for healthcare professionals
+              in a language you&apos;re comfortable with.
             </p>
-          </section>
-        )}
+            <div className="hero-actions">
+              <GetStarted className="btn btn-accent btn-lg" />
+              <a href="#how-it-works" className="btn btn-secondary btn-lg">
+                How It Works
+              </a>
+            </div>
+            <p className="hero-langs">ગુજરાતી · हिंदी · English</p>
+          </div>
+        </section>
 
-        {stage === "done" && result && (
-          <>
-            <Results data={result} t={t} />
-            {result.document_type !== "other" && (
-              <>
-                <AskReport key={JSON.stringify(result).length} report={result} lang={lang} t={t} />
-                <div className="stack">
-                  <button className="btn btn-secondary" onClick={() => window.print()}>
-                    📄 {t.doctor.download}
-                  </button>
-                  {result.document_type === "lab_report" && labReports.length >= 2 && (
-                    <button className="btn btn-secondary" onClick={() => go("trends")}>
-                      📈 {t.trends.title}
-                    </button>
-                  )}
-                  <button className="btn btn-primary" onClick={startOver}>
-                    {t.startOver}
-                  </button>
+        <section id="how-it-works" className="home-section">
+          <div className="home-wrap">
+            <h2 className="section-heading">How ArogyaMitra Works</h2>
+            <p className="section-sub">Three simple steps to make your healthcare journey easier.</p>
+            <ol className="steps">
+              {STEPS.map((s, i) => (
+                <li key={s.title} className="step-card">
+                  <div className="step-top">
+                    <span className="step-badge">{i + 1}</span>
+                    <span className="step-icon" aria-hidden="true">
+                      {s.icon}
+                    </span>
+                  </div>
+                  <h3>{s.title}</h3>
+                  <p>{s.text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        <section id="features" className="home-section home-section-alt">
+          <div className="home-wrap">
+            <h2 className="section-heading">What Makes ArogyaMitra Helpful?</h2>
+            <div className="features">
+              {FEATURES.map((f) => (
+                <div key={f.title} className="feature-card">
+                  <span className="feature-icon" aria-hidden="true">
+                    {f.icon}
+                  </span>
+                  <h3>{f.title}</h3>
+                  <p>{f.text}</p>
                 </div>
-              </>
-            )}
-            {result.document_type === "other" && (
-              <button className="btn btn-primary" onClick={startOver}>
-                {t.startOver}
-              </button>
-            )}
-          </>
-        )}
+              ))}
+            </div>
+          </div>
+        </section>
 
-        {stage === "history" && (
-          <>
-            <h1 className="page-title">📁 {t.history.title}</h1>
-            <p className="muted">🔒 {t.history.savedNote}</p>
-            {labReports.length >= 2 && (
-              <button className="btn btn-primary" style={{ marginBottom: 16 }} onClick={() => go("trends")}>
-                📈 {t.trends.title}
-              </button>
-            )}
-            {saved.length === 0 && <p>{t.history.empty}</p>}
-            {saved.map((r) => (
-              <section key={r.id} className="card saved">
-                <div className="lab-head">
-                  <strong>{typeLabel(r)}</strong>
-                  <span className="muted">{formatDate(reportDate(r), lang)}</span>
-                </div>
-                {r.result.summary && <p className="saved-summary">{r.result.summary}</p>}
-                <div className="btn-row">
-                  <button className="btn btn-primary" onClick={() => openSaved(r)}>
-                    {t.history.view}
-                  </button>
-                  <button className="btn btn-secondary" onClick={() => removeSaved(r.id)}>
-                    {t.history.remove}
-                  </button>
-                </div>
-              </section>
-            ))}
-            <button className="btn btn-secondary" onClick={() => go("start")}>
-              ← {t.history.back}
-            </button>
-          </>
-        )}
+        <section id="about" className="home-section">
+          <div className="home-wrap">
+            <div className="responsibility">
+              <span className="responsibility-icon" aria-hidden="true">
+                🩺
+              </span>
+              <div>
+                <h2>Your Health Matters. Professional Care Comes First.</h2>
+                <p>
+                  ArogyaMitra is designed to help people organize and understand their health information. It does not
+                  diagnose medical conditions, prescribe medicines or recommend treatments. Medical decisions should
+                  always be made by qualified healthcare professionals.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        {stage === "trends" && (
-          <>
-            <Trends reports={saved} lang={lang} t={t} />
-            <button className="btn btn-secondary" onClick={() => go("history")}>
-              ← {t.history.back}
-            </button>
-          </>
-        )}
-
-        <footer className="footer">
-          <p>{t.disclaimer}</p>
-          <p>
-            {t.poweredBy}
-            {model ? ` · ${model}` : ""}
-          </p>
-        </footer>
+        <section className="home-section">
+          <div className="home-wrap">
+            <div className="final-cta">
+              <h2>Take the First Step Towards Better Health Understanding.</h2>
+              <p>
+                Share your concerns, organize your information and prepare for a more informed conversation with your
+                healthcare professional.
+              </p>
+              <GetStarted className="btn btn-accent btn-lg" />
+            </div>
+          </div>
+        </section>
       </main>
 
-      {stage === "done" && result && result.document_type !== "other" && (
-        <DoctorSummary data={result} lang={lang} t={t} />
-      )}
-    </>
+      <SiteFooter />
+    </div>
   );
 }

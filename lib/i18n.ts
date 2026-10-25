@@ -3,6 +3,8 @@ import type { Lang } from "./types";
 /** Every word the interface shows. The explanation itself comes from Gemma in the chosen language. */
 const en = {
   langName: "English",
+  logout: "Log out",
+  hello: "Hello",
   themeLight: "Switch to light mode",
   themeDark: "Switch to dark mode",
   tagline: "Understand your prescription, in your language.",
@@ -35,7 +37,7 @@ const en = {
   unclear: "Parts we could not read",
   notMedical: "This doesn't look like a prescription or lab report. Please try another photo.",
   startOver: "Check another paper",
-  disclaimer: "AarogyaMitra explains, it does not replace your doctor. Never change or stop a medicine without asking your doctor.",
+  disclaimer: "ArogyaMitra explains, it does not replace your doctor. Never change or stop a medicine without asking your doctor.",
   poweredBy: "Explained by Gemma 4",
   ask: {
     title: "Ask about this report",
@@ -77,7 +79,7 @@ const en = {
     other: "Other",
   },
   errors: {
-    busy: "Too many people are using AarogyaMitra right now. Please try again in a minute.",
+    busy: "Too many people are using ArogyaMitra right now. Please try again in a minute.",
     too_large: "This photo is too large. Please choose a smaller one.",
     bad_image: "We could not open this photo. Please try another one.",
     generic: "Something went wrong. Please try again.",
@@ -88,6 +90,8 @@ export type Strings = typeof en;
 
 const hi: Strings = {
   langName: "हिंदी",
+  logout: "लॉग आउट",
+  hello: "नमस्ते",
   themeLight: "लाइट मोड चालू करें",
   themeDark: "डार्क मोड चालू करें",
   tagline: "अपनी दवा की पर्ची, अपनी भाषा में समझें।",
@@ -171,6 +175,8 @@ const hi: Strings = {
 
 const gu: Strings = {
   langName: "ગુજરાતી",
+  logout: "લૉગ આઉટ",
+  hello: "નમસ્તે",
   themeLight: "લાઇટ મોડ ચાલુ કરો",
   themeDark: "ડાર્ક મોડ ચાલુ કરો",
   tagline: "તમારી દવાની ચિઠ્ઠી, તમારી ભાષામાં સમજો.",

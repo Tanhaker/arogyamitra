@@ -1,12 +1,15 @@
 import type { Explanation, SavedReport } from "./types";
 
-/** Reports are kept only in this browser (never on our server), so the user stays in control. */
-const KEY = "am_reports";
+/**
+ * Reports are kept only in this browser (never on our server), so the user stays in control.
+ * Each Google account gets its own key, so people sharing a phone never see each other's reports.
+ */
 const MAX = 30;
+const keyFor = (userId: string) => `am_reports:${userId}`;
 
-export function loadReports(): SavedReport[] {
+export function loadReports(userId: string): SavedReport[] {
   try {
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(keyFor(userId));
     const list = raw ? (JSON.parse(raw) as SavedReport[]) : [];
     return Array.isArray(list) ? list : [];
   } catch {
@@ -14,24 +17,24 @@ export function loadReports(): SavedReport[] {
   }
 }
 
-function write(list: SavedReport[]) {
+function write(userId: string, list: SavedReport[]) {
   try {
-    localStorage.setItem(KEY, JSON.stringify(list.slice(0, MAX)));
+    localStorage.setItem(keyFor(userId), JSON.stringify(list.slice(0, MAX)));
   } catch {}
 }
 
-export function saveReport(result: Explanation): SavedReport {
+export function saveReport(userId: string, result: Explanation): SavedReport {
   const report: SavedReport = {
     id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
     savedAt: new Date().toISOString(),
     result,
   };
-  write([report, ...loadReports()]);
+  write(userId, [report, ...loadReports(userId)]);
   return report;
 }
 
-export function deleteReport(id: string) {
-  write(loadReports().filter((r) => r.id !== id));
+export function deleteReport(userId: string, id: string) {
+  write(userId, loadReports(userId).filter((r) => r.id !== id));
 }
 
 /** The date a report is about: the date printed on it, else when it was explained. */

@@ -8,7 +8,7 @@ const LANG_NAME: Record<Lang, string> = {
 };
 
 export function systemPrompt(lang: Lang): string {
-  return `You are AarogyaMitra, a careful assistant that EXPLAINS medical prescriptions and lab reports to ordinary people (many are elderly or not medically trained). You only describe what is printed on the paper.
+  return `You are ArogyaMitra, a careful assistant that EXPLAINS medical prescriptions and lab reports to ordinary people (many are elderly or not medically trained). You only describe what is printed on the paper.
 
 ${SAFETY_RULES}
 
@@ -60,7 +60,7 @@ export const USER_PROMPT = "Please explain this medical document.";
 
 /** For "Ask your report": answers must come only from the report data we already extracted. */
 export function askPrompt(lang: Lang, reportJson: string): string {
-  return `You are AarogyaMitra. A person is asking questions about their own medical report or prescription. You only explain what is on it.
+  return `You are ArogyaMitra. A person is asking questions about their own medical report or prescription. You only explain what is on it.
 
 ${SAFETY_RULES}
 

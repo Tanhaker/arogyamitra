@@ -13,7 +13,7 @@ export default function DoctorSummary({ data, lang, t }: { data: Explanation; la
   return (
     <div className="print-only doc-summary">
       <h1>
-        AarogyaMitra · {t.doctor.title}
+        ArogyaMitra · {t.doctor.title}
       </h1>
       <p className="doc-meta">
         {t.doctor.prepared}: {today}
