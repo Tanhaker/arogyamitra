@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import GetStarted from "@/components/GetStarted";
 import {
-  IconArrowRight,
   IconCheck,
   IconDownload,
   IconGlobe,
@@ -120,9 +119,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               </p>
               <div className="hero-actions">
                 <GetStarted className="btn btn-accent btn-lg" />
-                <a href="#how-it-works" className="text-link">
-                  How It Works <IconArrowRight size={18} />
-                </a>
               </div>
               <p className="hero-note">
                 <IconLock size={16} /> Free · Sign in with Google · Your photos are never stored
