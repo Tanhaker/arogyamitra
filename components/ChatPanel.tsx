@@ -4,11 +4,12 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { EMERGENCY } from "@/lib/emergency";
 import { processImage, type Page } from "@/lib/image";
 import { speak, stopSpeaking, useVoice } from "@/lib/speech";
+import { useSpeechInput } from "@/lib/stt";
 import { clearChat, formatDate, loadChat, loadReports, reportDate, saveChat } from "@/lib/storage";
 import type { ChatMessage, SavedReport } from "@/lib/types";
 import { useApp } from "./AppProvider";
 import CameraCapture from "./CameraCapture";
-import { IconCamera, IconCopy, IconPhone, IconSend, IconSpeaker, IconStop, IconTrash, IconX } from "./Icons";
+import { IconCamera, IconCopy, IconMic, IconPhone, IconSend, IconSpeaker, IconStop, IconTrash, IconX } from "./Icons";
 
 interface Msg extends ChatMessage {
   emergency?: boolean;
@@ -29,6 +30,31 @@ export default function ChatPanel({ compact = false, initialReportIds = [] }: { 
   const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState<number | null>(null);
   const [speaking, setSpeaking] = useState<number | null>(null);
+  const [autoRead, setAutoRead] = useState(false);
+  const autoReadRef = useRef(false);
+  const voiceRef = useRef<SpeechSynthesisVoice | null>(null);
+  voiceRef.current = voice;
+
+  // Speech to text: the transcript fills the box live; the person checks it and taps send.
+  const stt = useSpeechInput(lang, (text) => setInput(text.slice(0, 2000)));
+
+  useEffect(() => {
+    try {
+      const on = localStorage.getItem("am_autoread") === "1";
+      setAutoRead(on);
+      autoReadRef.current = on;
+    } catch {}
+  }, []);
+
+  function toggleAutoRead() {
+    const next = !autoRead;
+    setAutoRead(next);
+    autoReadRef.current = next;
+    if (!next) stopSpeaking();
+    try {
+      localStorage.setItem("am_autoread", next ? "1" : "0");
+    } catch {}
+  }
   const abortRef = useRef<AbortController | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const endRef = useRef<HTMLDivElement>(null);
@@ -97,6 +123,12 @@ export default function ChatPanel({ compact = false, initialReportIds = [] }: { 
           setMessages((m) => [...m.slice(0, -1), { role: "model", text: answer }]);
         }
         if (!answer.trim()) throw new Error("generic");
+        // Text to speech: read the finished answer aloud if the person turned that on.
+        if (autoReadRef.current && voiceRef.current) {
+          const idx = next.length - 1;
+          setSpeaking(idx);
+          speak(answer, voiceRef.current, () => setSpeaking(null));
+        }
       } catch (e) {
         if (controller.signal.aborted) {
           setMessages((m) => (answer ? m : m.slice(0, -1)));
@@ -148,18 +180,32 @@ export default function ChatPanel({ compact = false, initialReportIds = [] }: { 
   return (
     <section className={compact ? "card chat-panel compact" : "chat-panel"} aria-label={compact ? t.app.report.ask : c.title}>
       {compact ? (
-        <h2 className="section-title">{t.app.report.ask}</h2>
+        <div className="card-head">
+          <h2 className="section-title">{t.app.report.ask}</h2>
+          {voice && (
+            <button type="button" className="toggle-chip" aria-pressed={autoRead} onClick={toggleAutoRead}>
+              <IconSpeaker size={18} /> {c.autoRead}
+            </button>
+          )}
+        </div>
       ) : (
         <div className="chat-top">
           <div>
             <h1 className="page-title" style={{ marginBottom: 4 }}>{c.title}</h1>
             <p className="muted" style={{ margin: 0 }}>{c.intro}</p>
           </div>
-          {messages.length > 0 && (
-            <button className="icon-btn" onClick={() => { if (window.confirm(c.clear + "?")) { clearChat(user.id); setMessages([]); } }} aria-label={c.clear} title={c.clear}>
-              <IconTrash size={20} />
-            </button>
-          )}
+          <div className="chat-top-actions">
+            {voice && (
+              <button type="button" className="toggle-chip" aria-pressed={autoRead} onClick={toggleAutoRead}>
+                <IconSpeaker size={18} /> {c.autoRead}
+              </button>
+            )}
+            {messages.length > 0 && (
+              <button className="icon-btn" onClick={() => { if (window.confirm(c.clear + "?")) { clearChat(user.id); setMessages([]); } }} aria-label={c.clear} title={c.clear}>
+                <IconTrash size={20} />
+              </button>
+            )}
+          </div>
         </div>
       )}
 
@@ -244,14 +290,30 @@ export default function ChatPanel({ compact = false, initialReportIds = [] }: { 
         onChange={(e) => { const f = e.target.files?.[0]; e.target.value = ""; if (f) onPhoto(f); }} />
       {camera && <CameraCapture t={t} onCapture={onPhoto} onClose={() => setCamera(false)} onFallback={fallback} />}
 
-      <form className="ask-row" onSubmit={(e) => { e.preventDefault(); send(input); }}>
+      {stt.listening && (
+        <p className="listening" role="status"><span className="listening-dot" aria-hidden="true" /> {c.listening}</p>
+      )}
+      {stt.error && !stt.listening && (
+        <p className="muted" role="alert" style={{ margin: "0 0 8px" }}>
+          {stt.error === "denied" ? c.micDenied : stt.error === "no-speech" ? c.micNoSpeech : c.micFailed}
+        </p>
+      )}
+
+      <form className="ask-row" onSubmit={(e) => { e.preventDefault(); if (stt.listening) stt.stop(); send(input); }}>
         {!compact && (
           <button type="button" className="icon-btn" onClick={() => setCamera(true)} aria-label={c.attachPhoto}>
             <IconCamera size={22} />
           </button>
         )}
-        <input className="ask-input" value={input} onChange={(e) => setInput(e.target.value)} placeholder={c.placeholder}
-          aria-label={c.placeholder} maxLength={2000} />
+        <input className="ask-input" value={input} onChange={(e) => setInput(e.target.value)}
+          placeholder={stt.listening ? c.listening : c.placeholder} aria-label={c.placeholder} maxLength={2000} />
+        {stt.supported && !streaming && (
+          <button type="button" className={stt.listening ? "icon-btn mic-btn is-listening" : "icon-btn mic-btn"}
+            onClick={() => (stt.listening ? stt.stop() : (stopSpeaking(), stt.start()))}
+            aria-pressed={stt.listening} aria-label={stt.listening ? c.stopListening : c.mic} title={stt.listening ? c.stopListening : c.mic}>
+            {stt.listening ? <IconStop size={22} /> : <IconMic size={22} />}
+          </button>
+        )}
         {streaming ? (
           <button type="button" className="btn btn-secondary ask-send" onClick={() => abortRef.current?.abort()} aria-label={c.stop}>
             <IconStop size={20} />
