@@ -3,6 +3,8 @@ import type { Lang } from "./types";
 /** Every word the interface shows. The explanation itself comes from Gemma in the chosen language. */
 const en = {
   langName: "English",
+  themeLight: "Switch to light mode",
+  themeDark: "Switch to dark mode",
   tagline: "Understand your prescription, in your language.",
   step1: "Choose your language",
   step2: "Add a photo of your prescription or lab report",
@@ -46,6 +48,8 @@ export type Strings = typeof en;
 
 const hi: Strings = {
   langName: "हिंदी",
+  themeLight: "लाइट मोड चालू करें",
+  themeDark: "डार्क मोड चालू करें",
   tagline: "अपनी दवा की पर्ची, अपनी भाषा में समझें।",
   step1: "अपनी भाषा चुनें",
   step2: "अपनी दवा की पर्ची या जाँच रिपोर्ट की फोटो डालें",
@@ -87,6 +91,8 @@ const hi: Strings = {
 
 const gu: Strings = {
   langName: "ગુજરાતી",
+  themeLight: "લાઇટ મોડ ચાલુ કરો",
+  themeDark: "ડાર્ક મોડ ચાલુ કરો",
   tagline: "તમારી દવાની ચિઠ્ઠી, તમારી ભાષામાં સમજો.",
   step1: "તમારી ભાષા પસંદ કરો",
   step2: "તમારી દવાની ચિઠ્ઠી અથવા રિપોર્ટનો ફોટો ઉમેરો",

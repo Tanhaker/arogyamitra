@@ -1,8 +1,11 @@
 /*
  * THEME: every colour, font, radius and size lives here.
- * Replace these values with the ones from design.md; no other file needs to change.
+ * Light mode is :root; dark mode is [data-theme="dark"] (set by the header toggle,
+ * or from the phone's setting until the user picks one).
  */
 :root {
+  color-scheme: light;
+
   /* Fonts */
   /* Headings: Poppins Medium (500) / Bold (700). Body: Roboto Regular (400). Anything else: sans-serif. */
   --font-heading: var(--font-poppins), sans-serif;
@@ -10,26 +13,26 @@
   --weight-medium: 500;
   --weight-bold: 700;
 
-  /* Brand */
-  --color-primary: #0f766e;
-  --color-primary-hover: #115e59;
+  /* Brand: primary buttons / links */
+  --color-primary: #2c5e7a;
+  --color-primary-hover: #234b62;
   --color-on-primary: #ffffff;
-  --color-primary-soft: #e6f4f2;
+  --color-primary-soft: #e4edf2;
 
   /* Surfaces & text */
-  --color-bg: #f7f8f7;
-  --color-surface: #ffffff;
-  --color-border: #dfe3e1;
-  --color-text: #1b1f1e;
-  --color-text-muted: #55605d;
+  --color-bg: #f7f5f0; /* app canvas */
+  --color-surface: #ffffff; /* cards, inputs */
+  --color-border: #e3e0d8;
+  --color-text: #1e293b; /* primary text, headings */
+  --color-text-muted: #475569; /* labels, captions */
 
   /* Status (warnings, lab values) */
   --color-urgent: #b42318;
   --color-urgent-soft: #fdecea;
   --color-check: #a15c07;
   --color-check-soft: #fff4e0;
-  --color-info: #175cd3;
-  --color-info-soft: #eaf1fd;
+  --color-info: #2c5e7a;
+  --color-info-soft: #e4edf2;
   --color-normal: #067647;
   --color-normal-soft: #e7f6ee;
 
@@ -41,28 +44,31 @@
   --text-xl: 26px;
   --text-sm: 16px;
   --tap: 56px; /* minimum height of anything you can press */
-  --shadow: 0 1px 2px rgb(16 24 40 / 6%), 0 2px 8px rgb(16 24 40 / 6%);
+  --shadow: 0 1px 2px rgb(30 41 59 / 6%), 0 2px 8px rgb(30 41 59 / 6%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-primary: #2dd4bf;
-    --color-primary-hover: #5eead4;
-    --color-on-primary: #04211e;
-    --color-primary-soft: #0f2e2b;
-    --color-bg: #0f1312;
-    --color-surface: #171c1b;
-    --color-border: #2a3230;
-    --color-text: #eef2f1;
-    --color-text-muted: #a5b0ad;
-    --color-urgent: #f97066;
-    --color-urgent-soft: #3a1714;
-    --color-check: #fdb022;
-    --color-check-soft: #33240b;
-    --color-info: #84adff;
-    --color-info-soft: #14213d;
-    --color-normal: #47cd89;
-    --color-normal-soft: #0f2a1d;
-    --shadow: none;
-  }
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-primary: #5d9cbb;
+  --color-primary-hover: #7fb3cd;
+  --color-on-primary: #0f1b24;
+  --color-primary-soft: #1b3445;
+
+  --color-bg: #111827;
+  --color-surface: #1e293b;
+  --color-border: #334155;
+  --color-text: #f1f5f9;
+  --color-text-muted: #94a3b8;
+
+  --color-urgent: #f97066;
+  --color-urgent-soft: #3b1a1d;
+  --color-check: #fdb022;
+  --color-check-soft: #3a2a10;
+  --color-info: #5d9cbb;
+  --color-info-soft: #1b3445;
+  --color-normal: #47cd89;
+  --color-normal-soft: #123327;
+
+  --shadow: none;
 }

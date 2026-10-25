@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Logo from "@/components/Logo";
 import Results from "@/components/Results";
+import ThemeToggle from "@/components/ThemeToggle";
 import { LANGS, STRINGS } from "@/lib/i18n";
 import { fileToDataUrl } from "@/lib/image";
 import type { Explanation, ExplainResponse, Lang } from "@/lib/types";
@@ -75,6 +76,7 @@ export default function Home() {
     <main className="page">
       <header className="header">
         <Logo />
+        <ThemeToggle labels={{ light: t.themeLight, dark: t.themeDark }} />
       </header>
 
       {stage === "start" && (
