@@ -74,4 +74,5 @@ export interface SavedReport {
 export interface ChatMessage {
   role: "user" | "model";
   text: string;
+  emergency?: boolean; // the fixed (non-model) emergency card, kept so it reappears with the history
 }

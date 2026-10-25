@@ -10,14 +10,11 @@ import { useApp } from "./AppProvider";
 import ChatPanel from "./ChatPanel";
 import DoctorSummary from "./DoctorSummary";
 import { IconAlert, IconDownload, IconHome, IconScan, IconSpeaker, IconStop } from "./Icons";
+import RangeBar from "./RangeBar";
 import SeverityBadge from "./SeverityBadge";
+import TimeIcon from "./TimeIcon";
 
-const SLOTS: { key: TimeOfDay; icon: string }[] = [
-  { key: "morning", icon: "☀️" },
-  { key: "afternoon", icon: "🌤️" },
-  { key: "evening", icon: "🌇" },
-  { key: "night", icon: "🌙" },
-];
+const SLOTS: { key: TimeOfDay }[] = [{ key: "morning" }, { key: "afternoon" }, { key: "evening" }, { key: "night" }];
 
 export default function ReportView({ report }: { report: SavedReport }) {
   const { t, lang } = useApp();
@@ -82,12 +79,12 @@ export default function ReportView({ report }: { report: SavedReport }) {
                 <section className="card">
                   <h2 className="section-title">{r.schedule}</h2>
                   <div className="timetable">
-                    {SLOTS.map(({ key, icon }) => {
+                    {SLOTS.map(({ key }) => {
                       const meds = data.medicines.filter((m) => m.timing.includes(key));
                       if (!meds.length) return null;
                       return (
                         <div key={key} className="slot">
-                          <div className="slot-head">{icon} {t.app.times[key]}</div>
+                          <div className="slot-head"><TimeIcon time={key} /> {t.app.times[key]}</div>
                           <ul>
                             {meds.map((m) => (
                               <li key={m.name}>
@@ -195,18 +192,23 @@ export default function ReportView({ report }: { report: SavedReport }) {
   );
 
   function LabRow({ l }: { l: LabResult }) {
-    const value = l.value !== null ? `${l.value} ${l.unit}`.trim() : l.value_text || "";
+    const value = l.value !== null ? String(l.value) : l.value_text || "";
     return (
       <div className={`lab lab-${l.status}`}>
         <div className="lab-head">
-          <strong>{l.test}</strong>
+          <span className="lab-name">{l.test}</span>
           <SeverityBadge level={l.status} t={t} noRange={!l.range_text} />
         </div>
-        <div className="lab-value">
-          {value}
-          {l.range_text && <span className="muted"> · {r.range}: {l.range_text}</span>}
+        <div className="lab-reading">
+          <span className="lab-num">{value}</span>
+          {l.value !== null && <span className="lab-unit">{l.unit}</span>}
+          {l.range_text && <span className="lab-range">{r.range}: {l.range_text}</span>}
         </div>
-        {l.explanation && <p className="muted" style={{ margin: "2px 0 0" }}>{l.explanation}</p>}
+        {l.value !== null && (
+          <RangeBar value={l.value} low={l.ref_low ?? null} high={l.ref_high ?? null} status={l.status}
+            label={`${l.test}: ${l.value} ${l.unit}, ${r.range} ${l.range_text}`} />
+        )}
+        {l.explanation && <p className="lab-explain">{l.explanation}</p>}
       </div>
     );
   }

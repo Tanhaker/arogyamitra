@@ -112,3 +112,22 @@ export const IconLogout = (p: P) => (
 export const IconPhone = (p: P) => (
   <Svg {...p}><path d="M5 4h3.5l1.5 4-2 1.5a11 11 0 0 0 6.5 6.5L16 14l4 1.5V19a1.5 1.5 0 0 1-1.5 1.5A15.5 15.5 0 0 1 3.5 5.5 1.5 1.5 0 0 1 5 4z" /></Svg>
 );
+export const IconSun = (p: P) => (
+  <Svg {...p}><circle cx="12" cy="12" r="4" /><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" /></Svg>
+);
+export const IconSunHigh = (p: P) => (
+  <Svg {...p}><circle cx="12" cy="13" r="4" /><path d="M12 4v2M5.6 7.6 7 9M18.4 7.6 17 9M3.5 19.5h17" /></Svg>
+);
+export const IconSunset = (p: P) => (
+  <Svg {...p}><path d="M7 17a5 5 0 0 1 10 0" /><path d="M3 17h18M12 5v4M5.6 10.6 7 12M18.4 10.6 17 12M9.5 7.5 12 5l2.5 2.5" /><path d="M7 20.5h10" /></Svg>
+);
+export const IconMoon = (p: P) => (
+  <Svg {...p}><path d="M19.5 14.5A8 8 0 0 1 9.5 4.5a8 8 0 1 0 10 10z" /></Svg>
+);
+export const IconFlask = (p: P) => (
+  <Svg {...p}><path d="M9.5 3.5h5M10.5 3.5v6L5 18.5A1.5 1.5 0 0 0 6.3 20.5h11.4a1.5 1.5 0 0 0 1.3-2L13.5 9.5v-6" /><path d="M7.5 15h9" /></Svg>
+);
+export const IconChevronDown = (p: P) => (
+  <Svg {...p}><path d="m6 9 6 6 6-6" /></Svg>
+);
+export const IconGlobeSmall = IconGlobe;

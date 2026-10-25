@@ -115,7 +115,7 @@ export default function ScanFlow({ initialType }: { initialType: DocType }) {
       ) : (
         <>
           <section className="card">
-            <h2 className="field-label">{s.docType.label}</h2>
+            <h2 className="field-label field-label-h">{s.docType.label}</h2>
             <div className="segmented" role="radiogroup" aria-label={s.docType.label}>
               {(["prescription", "lab_report", "auto"] as DocType[]).map((d) => (
                 <button key={d} type="button" role="radio" aria-checked={docType === d} onClick={() => setDocType(d)}>

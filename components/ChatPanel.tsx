@@ -46,11 +46,11 @@ export default function ChatPanel({ compact = false, initialReportIds = [] }: { 
 
   useEffect(() => {
     setReports(loadReports(user.id));
-    if (!compact) setMessages(loadChat(user.id));
+    if (!compact) setMessages(loadChat(user.id) as Msg[]);
   }, [user.id, compact]);
 
   useEffect(() => {
-    if (!compact && !streaming) saveChat(user.id, messages.filter((m) => !m.emergency).map(({ role, text }) => ({ role, text })));
+    if (!compact && !streaming) saveChat(user.id, messages.map(({ role, text, emergency }) => (emergency ? { role, text, emergency } : { role, text })));
   }, [messages, streaming, compact, user.id]);
 
   useEffect(() => {
@@ -167,8 +167,8 @@ export default function ChatPanel({ compact = false, initialReportIds = [] }: { 
             <p className="muted" style={{ margin: 0 }}>{c.intro}</p>
           </div>
           {messages.length > 0 && (
-            <button className="btn btn-secondary btn-inline" onClick={() => { clearChat(user.id); setMessages([]); }}>
-              <IconTrash /> {c.clear}
+            <button className="icon-btn" onClick={() => { if (window.confirm(c.clear + "?")) { clearChat(user.id); setMessages([]); } }} aria-label={c.clear} title={c.clear}>
+              <IconTrash size={20} />
             </button>
           )}
         </div>

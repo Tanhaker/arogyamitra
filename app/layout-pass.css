@@ -1,0 +1,448 @@
+/* Layout pass: compact header, first-run panel, two-column dashboard, medicine progress, range bars. */
+
+/* Compact language menu (narrow screens) */
+.lang-menu {
+  position: relative;
+  display: none;
+}
+.lang-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 44px;
+  padding: 0 10px 0 12px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+.lang-menu-pop {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 6px);
+  z-index: 40;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  padding: 6px;
+}
+.lang-switch-stack {
+  flex-direction: column;
+  border: 0;
+  padding: 0;
+  min-width: 150px;
+}
+.lang-switch-stack button {
+  min-height: 48px;
+  text-align: left;
+  padding: 0 14px;
+  font-size: var(--text-base);
+}
+@media (max-width: 1080px) {
+  .lang-menu {
+    display: block;
+  }
+  .app-header-lang {
+    display: none !important;
+  }
+}
+@media (max-width: 420px) {
+  .app-header-row {
+    gap: 8px;
+    padding: 8px 12px;
+  }
+  .app-header-actions {
+    gap: 6px;
+  }
+}
+
+/* A field label never outgrows the page title */
+.field-label-h {
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  margin: 0 0 8px;
+}
+@media (max-width: 420px) {
+  .segmented {
+    grid-template-columns: 1fr;
+  }
+  .segmented button {
+    min-height: 48px;
+  }
+}
+
+/* Quick actions: distinct icons; coral tile text bold enough for large-text contrast */
+.quick-accent {
+  font-weight: var(--weight-bold);
+  font-size: 19px;
+}
+
+/* ---------- First run (no reports yet) ---------- */
+.first-run {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 32px;
+  padding: 28px;
+}
+.first-run-title {
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: -0.01em;
+  margin-bottom: 16px;
+}
+.first-run-steps {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.first-run-steps li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.first-run-cta {
+  min-height: var(--tap);
+  font-size: var(--text-lg);
+  padding: 12px 24px;
+}
+.first-run-side {
+  border-left: 1px solid var(--color-border);
+  padding-left: 32px;
+}
+.side-title {
+  font-size: var(--text-lg);
+  font-weight: var(--weight-medium);
+  margin-bottom: 6px;
+}
+.sample-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.sample-row.compact {
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+.sample-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-primary);
+  font-family: var(--font-heading);
+  font-weight: var(--weight-medium);
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.sample-row.compact .sample-btn {
+  min-height: 52px;
+  justify-content: center;
+  padding: 10px 14px;
+}
+.sample-btn:hover {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+}
+.sample-btn img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  object-position: top;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+  background: #fff;
+}
+.sample-busy {
+  text-align: center;
+}
+@media (max-width: 760px) {
+  .first-run {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    padding: 20px 16px;
+  }
+  .first-run-side {
+    border-left: 0;
+    padding-left: 0;
+    border-top: 1px solid var(--color-border);
+    padding-top: 18px;
+  }
+  .first-run-cta {
+    width: 100%;
+  }
+}
+
+/* ---------- Returning user: two independent columns (no row gaps) ---------- */
+.dash-cols {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0 20px;
+  align-items: start;
+}
+.dash-col {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+@media (min-width: 900px) {
+  .dash-cols {
+    grid-template-columns: 1.1fr 1fr;
+  }
+}
+.hint-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--color-text-muted);
+}
+.hint-card svg {
+  flex: none;
+  color: var(--color-primary);
+}
+
+/* Medicines: progress, current slot, food tags */
+.progress {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.progress-track {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--color-primary-soft);
+  overflow: hidden;
+}
+.progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-primary);
+  transition: width 0.3s ease;
+}
+.dose-slot {
+  border-radius: var(--radius);
+  padding: 10px 12px;
+  margin: 0 -12px;
+}
+.dose-slot + .dose-slot {
+  margin-top: 4px;
+}
+.dose-slot.is-now {
+  background: var(--color-primary-soft);
+}
+.slot-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  margin: 0;
+}
+.now-tag {
+  margin-left: auto;
+  font-size: 14px;
+  font-weight: var(--weight-bold);
+  color: var(--color-on-primary);
+  background: var(--color-primary);
+  border-radius: var(--radius-sm);
+  padding: 2px 10px;
+}
+.dose {
+  flex-wrap: wrap;
+}
+.food-tag {
+  margin-left: auto;
+  font-size: 14px;
+  color: var(--color-text-muted);
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+.dose-slot.is-now .food-tag {
+  background: var(--color-surface);
+}
+.dose-sources {
+  margin: 14px 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.dose-sources a {
+  color: var(--color-primary);
+}
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.time-icon {
+  flex: none;
+}
+.time-morning,
+.time-afternoon {
+  color: #c27803;
+}
+.time-evening {
+  color: var(--color-accent);
+}
+.time-night {
+  color: var(--color-primary);
+}
+
+/* Needs attention: value easy to scan */
+.attention-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.attention-value {
+  font-family: var(--font-heading);
+  font-weight: var(--weight-medium);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-muted);
+}
+
+/* Recent reports: icon, title, severity, delete */
+.recent li {
+  grid-template-columns: auto 1fr auto auto;
+}
+.recent-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  display: grid;
+  place-items: center;
+}
+.recent .confirm {
+  grid-column: 1 / -1;
+}
+@media (max-width: 480px) {
+  .recent li {
+    grid-template-columns: auto 1fr auto;
+  }
+  .recent li .sev {
+    grid-column: 2;
+    justify-self: start;
+  }
+  .recent-delete {
+    grid-row: 1;
+    grid-column: 3;
+  }
+}
+
+/* ---------- Report: value first, range bar, readable explanation ---------- */
+.lab-name {
+  font-family: var(--font-heading);
+  font-weight: var(--weight-medium);
+}
+.lab-reading {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  margin-top: 4px;
+}
+.lab-num {
+  font-family: var(--font-heading);
+  font-weight: var(--weight-bold);
+  font-size: 26px;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.lab-urgent .lab-num {
+  color: var(--color-urgent);
+}
+.lab-unit {
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+}
+.lab-range {
+  margin-left: auto;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+.lab-explain {
+  margin: 8px 0 0;
+  color: var(--color-text);
+  font-size: var(--text-sm);
+}
+.range-bar {
+  margin-top: 10px;
+}
+.range-track {
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--color-border);
+}
+.range-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+  background: var(--color-normal);
+  opacity: 0.45;
+}
+.range-marker {
+  position: absolute;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  margin-left: -9px;
+  margin-top: -9px;
+  border-radius: 50%;
+  border: 3px solid var(--color-surface);
+  box-shadow: 0 0 0 1px var(--color-border);
+}
+.range-normal {
+  background: var(--color-normal);
+}
+.range-check {
+  background: var(--color-check);
+}
+.range-urgent {
+  background: var(--color-urgent);
+}
+
+/* Smallest phones: short language label keeps the header inside the screen */
+.lang-short {
+  display: none;
+}
+@media (max-width: 480px) {
+  .lang-long {
+    display: none;
+  }
+  .lang-short {
+    display: inline;
+  }
+  .app-header .logo-word {
+    font-size: 20px;
+  }
+  .app-header .logo-mark {
+    width: 32px;
+  }
+}
+
+/* Dose row: checkbox, name, food tag on one line (name wraps, tag stays) */
+.dose {
+  flex-wrap: nowrap;
+}
+.dose-name {
+  flex: 1;
+  min-width: 0;
+}

@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { LANG_LABEL, LANG_SHORT } from "@/lib/lang";
 import { logOut } from "@/app/actions";
 import { useApp } from "./AppProvider";
-import { IconChat, IconHome, IconLogout, IconScan, IconStethoscope } from "./Icons";
+import { IconChat, IconChevronDown, IconHome, IconLogout, IconScan, IconStethoscope } from "./Icons";
 import LangSwitch from "./LangSwitch";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
@@ -19,6 +21,21 @@ export default function AppHeader() {
     { href: "/concern", label: t.app.nav.concern, Icon: IconStethoscope },
   ];
   const active = (href: string) => path === href || (href === "/dashboard" && path.startsWith("/report"));
+  const [langOpen, setLangOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!langOpen) return;
+    const close = (e: MouseEvent | KeyboardEvent) => {
+      if (e instanceof KeyboardEvent ? e.key === "Escape" : !menuRef.current?.contains(e.target as Node)) setLangOpen(false);
+    };
+    document.addEventListener("mousedown", close);
+    document.addEventListener("keydown", close);
+    return () => {
+      document.removeEventListener("mousedown", close);
+      document.removeEventListener("keydown", close);
+    };
+  }, [langOpen]);
 
   return (
     <>
@@ -37,6 +54,20 @@ export default function AppHeader() {
           </nav>
           <div className="app-header-actions">
             <LangSwitch lang={lang} label={t.app.langLabel} onChange={setLang} className="lang-switch-wide" />
+            {/* Narrow screens: one small button instead of a full-width row */}
+            <div className="lang-menu" ref={menuRef}>
+              <button className="lang-menu-btn" onClick={() => setLangOpen((o) => !o)} aria-expanded={langOpen} aria-haspopup="true"
+                aria-label={`${t.app.langLabel}: ${LANG_LABEL[lang]}`}>
+                <span lang={lang} className="lang-long">{LANG_LABEL[lang]}</span>
+                <span lang={lang} className="lang-short" aria-hidden="true">{LANG_SHORT[lang]}</span>
+                <IconChevronDown size={18} />
+              </button>
+              {langOpen && (
+                <div className="lang-menu-pop">
+                  <LangSwitch lang={lang} label={t.app.langLabel} onChange={(l) => { setLang(l); setLangOpen(false); }} className="lang-switch-stack" />
+                </div>
+              )}
+            </div>
             <ThemeToggle labels={{ light: t.themeLight, dark: t.themeDark }} />
             <form action={logOut}>
               <button className="logout-btn" type="submit" aria-label={t.logout}>
@@ -45,9 +76,6 @@ export default function AppHeader() {
               </button>
             </form>
           </div>
-        </div>
-        <div className="app-header-lang">
-          <LangSwitch lang={lang} label={t.app.langLabel} onChange={setLang} />
         </div>
       </header>
 

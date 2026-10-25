@@ -3,6 +3,7 @@ import type { Lang } from "./types";
 export const LANG_COOKIE = "am_lang";
 export const LANG_ORDER: Lang[] = ["en", "hi", "gu"];
 export const LANG_LABEL: Record<Lang, string> = { en: "English", hi: "हिंदी", gu: "ગુજરાતી" };
+export const LANG_SHORT: Record<Lang, string> = { en: "EN", hi: "हिं", gu: "ગુ" };
 
 export function pickLang(v: unknown): Lang {
   return v === "hi" || v === "gu" ? v : "en";

@@ -6,6 +6,7 @@ import { themeInitScript } from "@/lib/theme";
 import "./theme.css";
 import "./globals.css";
 import "./app.css";
+import "./layout-pass.css";
 
 export const metadata: Metadata = {
   title: "ArogyaMitra: understand your prescription",
