@@ -109,9 +109,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                   {authMessage}
                 </div>
               )}
-              <p className="eyebrow">
-                <span className="eyebrow-dot" /> ગુજરાતી · हिंदी · English
-              </p>
+              <p className="eyebrow">ગુજરાતી · हिंदी · English</p>
               <h1 className="hero-title">
                 A Health Guide, <span className="hero-accent">Right by Your Side!</span>
               </h1>
@@ -161,56 +159,55 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           <div className="home-wrap">
             <p className="section-kicker">Features</p>
             <h2 className="section-heading">What Makes ArogyaMitra Helpful?</h2>
-            <div className="bento">
-              <article className="bento-item bento-wide">
-                <IconGlobe className="bento-icon" />
-                <h3>Multilingual Understanding</h3>
-                <p>Communicate naturally in Gujarati, Hindi and English.</p>
-                <div className="scripts">
-                  <span lang="gu">ખાલી પેટ શુગર સામાન્ય કરતાં વધારે છે.</span>
-                  <span lang="hi">खाली पेट शुगर सामान्य से ज़्यादा है।</span>
-                  <span lang="en">Fasting sugar is above the normal range.</span>
+            <ul className="feature-list">
+              <li className="feature-lead">
+                <IconGlobe className="feature-icon" />
+                <div>
+                  <h3>Multilingual Understanding</h3>
+                  <p>Communicate naturally in Gujarati, Hindi and English.</p>
+                  <div className="scripts">
+                    <span lang="gu">ખાલી પેટ શુગર સામાન્ય કરતાં વધારે છે.</span>
+                    <span lang="hi">खाली पेट शुगर सामान्य से ज़्यादा है।</span>
+                    <span lang="en">Fasting sugar is above the normal range.</span>
+                  </div>
                 </div>
-              </article>
-              <article className="bento-item bento-tall bento-teal">
-                <IconDownload className="bento-icon" />
-                <h3>Doctor-Ready Reports</h3>
-                <p>Generate downloadable summaries to share with healthcare professionals.</p>
-                <div className="mini-doc">
-                  <span className="mini-doc-title">Summary for doctor visit</span>
-                  <span className="mini-line w80" />
-                  <span className="mini-line w60" />
-                  <span className="mini-line w90" />
-                  <span className="mini-line w40" />
+              </li>
+              <li>
+                <IconScan className="feature-icon" />
+                <div>
+                  <h3>Smart Information Extraction</h3>
+                  <p>Identify and organise symptoms, duration and relevant health details.</p>
                 </div>
-              </article>
-              <article className="bento-item">
-                <IconScan className="bento-icon" />
-                <h3>Smart Information Extraction</h3>
-                <p>Identify and organise symptoms, duration and relevant health details.</p>
-              </article>
-              <article className="bento-item">
-                <IconSpark className="bento-icon" />
-                <h3>AI-Powered Summaries</h3>
-                <p>Convert unstructured descriptions into clear, structured summaries.</p>
-              </article>
-              <article className="bento-item bento-coral">
-                <IconQuestion className="bento-icon" />
-                <h3>Missing Information Detection</h3>
-                <p>Ask follow-up questions when important information is missing.</p>
-                <p className="followup">“How long have you had this headache?”</p>
-              </article>
-              <article className="bento-item bento-band">
-                <IconLock className="bento-icon" />
+              </li>
+              <li>
+                <IconSpark className="feature-icon" />
+                <div>
+                  <h3>AI-Powered Summaries</h3>
+                  <p>Convert unstructured descriptions into clear, structured summaries.</p>
+                </div>
+              </li>
+              <li>
+                <IconQuestion className="feature-icon" />
+                <div>
+                  <h3>Missing Information Detection</h3>
+                  <p>Ask follow-up questions when important information is missing, like “How long have you had this headache?”</p>
+                </div>
+              </li>
+              <li>
+                <IconDownload className="feature-icon" />
+                <div>
+                  <h3>Doctor-Ready Reports</h3>
+                  <p>Generate downloadable summaries to share with healthcare professionals.</p>
+                </div>
+              </li>
+              <li>
+                <IconLock className="feature-icon" />
                 <div>
                   <h3>Personal Health Information</h3>
-                  <p>
-                    Help you organise the information you provide during your interaction. Everything stays private to
-                    your own Google account.
-                  </p>
+                  <p>Help you organise the information you provide, kept private to your own Google account.</p>
                 </div>
-              </article>
-            </div>
+              </li>
+            </ul>
           </div>
         </section>
 

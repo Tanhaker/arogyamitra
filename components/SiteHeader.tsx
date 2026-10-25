@@ -18,7 +18,7 @@ export default function SiteHeader() {
         </nav>
         <div className="site-header-actions">
           <ThemeToggle labels={{ light: "Switch to light mode", dark: "Switch to dark mode" }} />
-          <GetStarted className="btn btn-accent btn-sm" />
+          <GetStarted className="btn btn-secondary btn-sm" />
         </div>
       </div>
     </header>

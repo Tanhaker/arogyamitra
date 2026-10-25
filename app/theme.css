@@ -43,8 +43,10 @@
   --color-normal-soft: #e7f6ee;
 
   /* Shape & scale: large by default so it is easy to read */
+  /* Three radii only: small (badges, inputs), default (buttons, blocks), large (the one hero panel) */
+  --radius-sm: 8px;
   --radius: 14px;
-  --radius-sm: 10px;
+  --radius-lg: 24px;
   --text-base: 18px;
   --text-lg: 21px;
   --text-xl: 26px;
