@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { logOut } from "@/app/actions";
 import AskReport from "@/components/AskReport";
+import Consult from "@/components/Consult";
 import DoctorSummary from "@/components/DoctorSummary";
 import Logo from "@/components/Logo";
 import Results from "@/components/Results";
@@ -13,7 +14,7 @@ import { fileToDataUrl } from "@/lib/image";
 import { deleteReport, formatDate, loadReports, reportDate, saveReport } from "@/lib/storage";
 import type { Explanation, ExplainResponse, Lang, SavedReport } from "@/lib/types";
 
-type Stage = "start" | "loading" | "done" | "history" | "trends";
+type Stage = "start" | "loading" | "done" | "history" | "trends" | "consult";
 
 export interface DashboardUser {
   id: string;
@@ -31,6 +32,7 @@ export default function Dashboard({ user }: { user: DashboardUser }) {
   const [model, setModel] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState<SavedReport[]>([]);
+  const [consultReport, setConsultReport] = useState<Explanation | null>(null);
   const cameraRef = useRef<HTMLInputElement>(null);
   const galleryRef = useRef<HTMLInputElement>(null);
   const t = STRINGS[lang];
@@ -119,8 +121,8 @@ export default function Dashboard({ user }: { user: DashboardUser }) {
 
   return (
     <>
-      <main className="page screen-only">
-        <header className="header">
+      <main className={stage === "consult" ? "page" : "page screen-only"}>
+        <header className="header screen-only">
           <button className="logo-btn" onClick={startOver} aria-label="ArogyaMitra">
             <Logo />
           </button>
@@ -134,7 +136,7 @@ export default function Dashboard({ user }: { user: DashboardUser }) {
           </div>
         </header>
         {user.name && (
-          <p className="muted" style={{ marginTop: -8 }}>
+          <p className="muted screen-only" style={{ marginTop: -8 }}>
             {t.hello}, {user.name.split(" ")[0]} 👋
           </p>
         )}
@@ -198,6 +200,22 @@ export default function Dashboard({ user }: { user: DashboardUser }) {
               </p>
             </section>
 
+            <section className="card">
+              <h2 className="step-title">💬 {t.consult.cardTitle}</h2>
+              <p className="muted" style={{ marginTop: -4 }}>
+                {t.consult.cardHint}
+              </p>
+              <button
+                className="btn btn-primary"
+                onClick={() => {
+                  setConsultReport(null);
+                  go("consult");
+                }}
+              >
+                {t.consult.start}
+              </button>
+            </section>
+
             {saved.length > 0 && (
               <button className="btn btn-secondary" onClick={() => go("history")}>
                 📁 {t.history.open} ({saved.length})
@@ -223,6 +241,15 @@ export default function Dashboard({ user }: { user: DashboardUser }) {
               <>
                 <AskReport key={JSON.stringify(result).length} report={result} lang={lang} t={t} />
                 <div className="stack">
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => {
+                      setConsultReport(result);
+                      go("consult");
+                    }}
+                  >
+                    🩺 {t.consult.fromReport}
+                  </button>
                   <button className="btn btn-secondary" onClick={() => window.print()}>
                     📄 {t.doctor.download}
                   </button>
@@ -278,6 +305,10 @@ export default function Dashboard({ user }: { user: DashboardUser }) {
           </>
         )}
 
+        {stage === "consult" && (
+          <Consult lang={lang} t={t} report={consultReport} onBack={() => go(consultReport ? "done" : "start")} />
+        )}
+
         {stage === "trends" && (
           <>
             <Trends reports={saved} lang={lang} t={t} />
@@ -287,7 +318,7 @@ export default function Dashboard({ user }: { user: DashboardUser }) {
           </>
         )}
 
-        <footer className="footer">
+        <footer className="footer screen-only">
           <p>{t.disclaimer}</p>
           <p>
             {t.poweredBy}
