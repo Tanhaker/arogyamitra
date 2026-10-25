@@ -21,7 +21,7 @@ export default function Results({ data, t }: { data: Explanation; t: Strings }) 
   return (
     <>
       {data.warnings.some((w) => w.level === "urgent") && (
-        <section className="card" aria-live="polite">
+        <section className="urgent-block" aria-live="polite">
           {data.warnings
             .filter((w) => w.level === "urgent")
             .map((w, i) => (

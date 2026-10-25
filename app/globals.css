@@ -431,7 +431,7 @@ strong {
 .page-title {
   font-size: var(--text-xl);
   font-weight: var(--weight-bold);
-  margin-bottom: 4px;
+  margin-bottom: 14px;
 }
 
 /* Saved reports */
@@ -522,6 +522,7 @@ strong {
 }
 .trend-chart {
   width: 100%;
+  max-width: 480px;
   height: auto;
   display: block;
   margin-top: 8px;
@@ -743,3 +744,109 @@ p {
   text-wrap: pretty;
 }
 
+
+/* Urgent alert stands on its own (no extra card around it) */
+.urgent-block {
+  margin-bottom: 16px;
+}
+.urgent-block .alert {
+  font-size: var(--text-lg);
+}
+
+/* Icons inside buttons never get stranded when the label wraps */
+.btn svg {
+  flex: none;
+}
+.btn {
+  line-height: 1.25;
+  text-align: center;
+}
+.logout-btn {
+  white-space: nowrap;
+}
+
+/* ---------- Phones ---------- */
+@media (max-width: 520px) {
+  .page {
+    padding: 12px 14px 40px;
+  }
+  .header {
+    padding: 4px 0 14px;
+    gap: 8px;
+  }
+  .header .logo-tag {
+    display: none;
+  }
+  .header .logo-word {
+    font-size: 22px;
+  }
+  .header .logo-mark {
+    width: 38px;
+  }
+  .header-actions {
+    gap: 6px;
+  }
+  .header .theme-toggle,
+  .logout-btn {
+    min-height: 44px;
+    height: 44px;
+  }
+  .header .theme-toggle {
+    width: 44px;
+  }
+  .logout-btn {
+    padding: 0 12px;
+    font-size: 15px;
+  }
+  .tagline {
+    font-size: var(--text-base);
+    margin-bottom: 16px;
+  }
+  .card {
+    padding: 16px;
+    margin-bottom: 12px;
+    border-radius: var(--radius);
+  }
+  .step-title,
+  .section-title {
+    font-size: 19px;
+  }
+  .summary {
+    font-size: var(--text-base);
+  }
+  .btn {
+    font-size: var(--text-base);
+    padding: 12px 16px;
+    gap: 8px;
+  }
+  .lang-btn {
+    font-size: var(--text-base);
+    min-height: 52px;
+  }
+  .ask-send {
+    padding: 12px 18px;
+  }
+  /* Icon + label read as one unit when the label wraps */
+  .btn:has(> svg) {
+    justify-content: flex-start;
+    text-align: left;
+    padding-left: 20px;
+  }
+  .q-item {
+    padding: 10px 6px;
+  }
+  .facts {
+    grid-template-columns: 1fr 1fr;
+  }
+  .bubble {
+    max-width: 92%;
+  }
+}
+@media (max-width: 340px) {
+  .lang-row {
+    grid-template-columns: 1fr;
+  }
+  .facts {
+    grid-template-columns: 1fr;
+  }
+}

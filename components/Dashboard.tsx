@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { IconCamera, IconChart, IconChat, IconDownload, IconFolder, IconImage, IconStethoscope } from "@/components/Icons";
+import { IconCamera, IconChart, IconChat, IconDownload, IconFolder, IconImage, IconScan, IconStethoscope } from "@/components/Icons";
 import { logOut } from "@/app/actions";
 import AskReport from "@/components/AskReport";
 import Consult from "@/components/Consult";
@@ -213,7 +213,7 @@ export default function Dashboard({ user, initialLang = "en" }: { user: Dashboar
                   go("consult");
                 }}
               >
-                {t.consult.start}
+                <IconChat /> {t.consult.start}
               </button>
             </section>
 
@@ -260,14 +260,14 @@ export default function Dashboard({ user, initialLang = "en" }: { user: Dashboar
                     </button>
                   )}
                   <button className="btn btn-primary" onClick={startOver}>
-                    {t.startOver}
+                    <IconScan /> {t.startOver}
                   </button>
                 </div>
               </>
             )}
             {result.document_type === "other" && (
               <button className="btn btn-primary" onClick={startOver}>
-                {t.startOver}
+                <IconScan /> {t.startOver}
               </button>
             )}
           </>

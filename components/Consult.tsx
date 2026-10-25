@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { IconDownload } from "@/components/Icons";
+import { IconChat, IconDownload, IconListCheck } from "@/components/Icons";
 import type { CategoryKey, ConsultInput, ConsultResult, Understood } from "@/lib/consult";
 import type { Strings } from "@/lib/i18n";
 import { formatDate } from "@/lib/storage";
@@ -260,14 +260,14 @@ export default function Consult({ lang, t, report, onBack }: {
             <IconDownload /> {c.download}
           </button>
           <button className="btn btn-secondary" onClick={copy} disabled={!selected.length}>
-            {copied ? c.copied : c.copy}
+            <IconListCheck /> {copied ? c.copied : c.copy}
           </button>
           <button className="btn btn-secondary" onClick={() => {
             setResult(null);
             setQuestions([]);
             setInput(EMPTY);
           }}>
-            {c.newConcern}
+            <IconChat /> {c.newConcern}
           </button>
           <button className="btn btn-secondary" onClick={onBack}>
             ← {t.history.back}

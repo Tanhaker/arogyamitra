@@ -674,3 +674,10 @@ html {
   letter-spacing: 0;
   line-height: 1.3;
 }
+
+/* Smallest phones: drop the theme switch from the homepage header so Get started fits */
+@media (max-width: 400px) {
+  .site-header .theme-toggle {
+    display: none;
+  }
+}
