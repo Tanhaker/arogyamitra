@@ -14,6 +14,14 @@ export function parseJson(text: string): unknown {
 }
 
 const str = (v: unknown): string => (typeof v === "string" ? v.trim() : typeof v === "number" ? String(v) : "");
+const num = (v: unknown): number | null => {
+  if (typeof v === "number" && Number.isFinite(v)) return v;
+  if (typeof v === "string") {
+    const n = parseFloat(v.replace(/,/g, ""));
+    return Number.isFinite(n) ? n : null;
+  }
+  return null;
+};
 const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
 const pick = <T extends string>(v: unknown, allowed: readonly T[], fallback: T): T =>
   allowed.includes(v as T) ? (v as T) : fallback;
@@ -46,8 +54,13 @@ function labResult(v: unknown): LabResult | null {
   if (!test) return null;
   return {
     test,
+    test_key: str(r.test_key) || test,
     value: str(r.value),
+    value_num: num(r.value_num),
+    unit: str(r.unit),
     normal_range: str(r.normal_range),
+    ref_low: num(r.ref_low),
+    ref_high: num(r.ref_high),
     status: pick(r.status, ["normal", "high", "low", "critical"] as const, "normal"),
     meaning: str(r.meaning),
   };
@@ -64,6 +77,7 @@ export function normalize(raw: unknown): Explanation {
   const o = (raw ?? {}) as Record<string, unknown>;
   const result: Explanation = {
     document_type: pick(o.document_type, ["prescription", "lab_report", "other"] as const, "other"),
+    report_date: /^\d{4}-\d{2}-\d{2}$/.test(str(o.report_date)) ? str(o.report_date) : "",
     summary: str(o.summary),
     medicines: arr(o.medicines).map(medicine).filter((m): m is Medicine => m !== null),
     lab_results: arr(o.lab_results).map(labResult).filter((r): r is LabResult => r !== null),

@@ -9,12 +9,15 @@ export class GemmaError extends Error {
   }
 }
 
-interface Part {
+export type InputPart = { text: string } | { inline_data: { mime_type: string; data: string } };
+export type Turn = { role: "user" | "model"; parts: InputPart[] };
+
+interface OutputPart {
   text?: string;
   thought?: boolean;
 }
 
-async function callModel(model: string, system: string, user: string, image: { mime: string; data: string },
+async function callModel(model: string, system: string, contents: Turn[], json: boolean,
   signal: AbortSignal): Promise<string> {
   const key = process.env.GEMINI_API_KEY;
   if (!key) throw new GemmaError("Server is missing GEMINI_API_KEY", 500);
@@ -25,11 +28,11 @@ async function callModel(model: string, system: string, user: string, image: { m
     headers: { "Content-Type": "application/json", "x-goog-api-key": key },
     body: JSON.stringify({
       systemInstruction: { parts: [{ text: system }] },
-      contents: [{ role: "user", parts: [{ text: user }, { inline_data: { mime_type: image.mime, data: image.data } }] }],
+      contents,
       generationConfig: {
         temperature: 0.2,
         maxOutputTokens: 8192,
-        responseMimeType: "application/json",
+        ...(json ? { responseMimeType: "application/json" } : {}),
         thinkingConfig: { thinkingLevel: "minimal" },
       },
     }),
@@ -41,22 +44,22 @@ async function callModel(model: string, system: string, user: string, image: { m
     throw new GemmaError(`${model} ${res.status}: ${detail}`, res.status);
   }
   const data = await res.json();
-  const parts: Part[] = data?.candidates?.[0]?.content?.parts ?? [];
+  const parts: OutputPart[] = data?.candidates?.[0]?.content?.parts ?? [];
   // Gemma 4 returns its reasoning as separate `thought` parts; keep only the answer.
   const text = parts.filter((p) => !p.thought && p.text).map((p) => p.text).join("");
   if (!text.trim()) throw new GemmaError(`${model} returned an empty answer`);
   return text;
 }
 
-/** Tries each configured model in order; returns the raw answer text and which model produced it. */
-export async function generate(system: string, user: string, image: { mime: string; data: string }) {
+/** Tries each configured model in order; returns the answer text and which model produced it. */
+export async function generate(system: string, contents: Turn[], { json = false } = {}) {
   const models = (process.env.GEMMA_MODELS || DEFAULT_MODELS).split(",").map((m) => m.trim()).filter(Boolean);
   let lastError: unknown;
   for (const model of models) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 55_000);
     try {
-      const text = await callModel(model, system, user, image, controller.signal);
+      const text = await callModel(model, system, contents, json, controller.signal);
       return { text, model };
     } catch (e) {
       lastError = e;

@@ -30,7 +30,11 @@ export async function POST(req: Request) {
   if ((data.length * 3) / 4 > MAX_BYTES) return fail("too_large", 413);
 
   try {
-    const { text, model } = await generate(systemPrompt(lang), USER_PROMPT, { mime, data });
+    const { text, model } = await generate(
+      systemPrompt(lang),
+      [{ role: "user", parts: [{ text: USER_PROMPT }, { inline_data: { mime_type: mime, data } }] }],
+      { json: true },
+    );
     let raw: unknown;
     try {
       raw = parseJson(text);
