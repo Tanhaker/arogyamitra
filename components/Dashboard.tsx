@@ -25,8 +25,8 @@ export interface DashboardUser {
 }
 
 /** The ArogyaMitra app (behind Google sign-in). */
-export default function Dashboard({ user }: { user: DashboardUser }) {
-  const [lang, setLang] = useState<Lang>("en");
+export default function Dashboard({ user, initialLang = "en" }: { user: DashboardUser; initialLang?: Lang }) {
+  const [lang, setLang] = useState<Lang>(initialLang);
   const [image, setImage] = useState<string | null>(null);
   const [stage, setStage] = useState<Stage>("start");
   const [result, setResult] = useState<Explanation | null>(null);

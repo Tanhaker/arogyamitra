@@ -621,3 +621,56 @@ html {
     gap: 6px;
   }
 }
+
+/* Language switch: in the header on wide screens, at the top of the hero otherwise */
+.lang-switch {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+}
+.lang-switch a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 12px;
+  border-radius: 11px;
+  color: var(--color-text-muted);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  transition: background 0.2s, color 0.2s;
+}
+.lang-switch a:hover {
+  color: var(--color-text);
+}
+.lang-switch a[aria-current="true"] {
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+.lang-switch-hero {
+  display: none;
+  margin-bottom: 22px;
+}
+@media (max-width: 1180px) {
+  .lang-switch-header {
+    display: none;
+  }
+  .lang-switch-hero {
+    display: inline-flex;
+  }
+}
+
+/* Indian scripts: tight Latin tracking breaks conjuncts, so reset it */
+:lang(gu) .hero-title,
+:lang(gu) .section-heading,
+:lang(gu) h2,
+:lang(gu) h3,
+:lang(hi) .hero-title,
+:lang(hi) .section-heading,
+:lang(hi) h2,
+:lang(hi) h3 {
+  letter-spacing: 0;
+  line-height: 1.3;
+}

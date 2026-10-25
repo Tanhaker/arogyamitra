@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins, Roboto } from "next/font/google";
+import { Noto_Sans_Gujarati, Poppins, Roboto } from "next/font/google";
 import { themeInitScript } from "@/lib/theme";
 import "./theme.css";
 import "./globals.css";
@@ -18,6 +18,13 @@ const poppins = Poppins({
   display: "swap",
 });
 const roboto = Roboto({ weight: ["400"], subsets: ["latin"], variable: "--font-roboto", display: "swap" });
+// Neither Poppins nor Roboto has Gujarati letters; Noto Sans Gujarati fills that gap.
+const notoGujarati = Noto_Sans_Gujarati({
+  weight: ["400", "600"],
+  subsets: ["gujarati"],
+  variable: "--font-gujarati",
+  display: "swap",
+});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -31,7 +38,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     // data-theme is set by the init script before paint, so the server and client markup differ on purpose.
-    <html lang="en" className={`${poppins.variable} ${roboto.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${poppins.variable} ${roboto.variable} ${notoGujarati.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>

@@ -1,24 +1,30 @@
 import Link from "next/link";
+import { HOME } from "@/lib/home-i18n";
+import type { Lang } from "@/lib/types";
 import GetStarted from "./GetStarted";
+import LangSwitch from "./LangSwitch";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 
-export default function SiteHeader() {
+export default function SiteHeader({ lang = "en" }: { lang?: Lang }) {
+  const h = HOME[lang];
+  const q = lang === "en" ? "" : `?lang=${lang}`;
   return (
     <header className="site-header">
       <div className="home-wrap site-header-row">
-        <Link href="/#home" className="logo-link" aria-label="ArogyaMitra home">
+        <Link href={`/${q}#home`} className="logo-link" aria-label="ArogyaMitra home">
           <Logo />
         </Link>
         <nav className="site-nav" aria-label="Main">
-          <Link href="/#home">Home</Link>
-          <Link href="/#how-it-works">How It Works</Link>
-          <Link href="/#features">Features</Link>
-          <Link href="/#about">About</Link>
+          <Link href={`/${q}#home`}>{h.nav.home}</Link>
+          <Link href={`/${q}#how-it-works`}>{h.nav.how}</Link>
+          <Link href={`/${q}#features`}>{h.nav.features}</Link>
+          <Link href={`/${q}#about`}>{h.nav.about}</Link>
         </nav>
         <div className="site-header-actions">
-          <ThemeToggle labels={{ light: "Switch to light mode", dark: "Switch to dark mode" }} />
-          <GetStarted className="btn btn-secondary btn-sm" />
+          <LangSwitch lang={lang} label={h.langLabel} className="lang-switch-header" />
+          <ThemeToggle labels={{ light: h.themeLight, dark: h.themeDark }} />
+          <GetStarted className="btn btn-secondary btn-sm" label={h.getStarted} lang={lang} />
         </div>
       </div>
     </header>

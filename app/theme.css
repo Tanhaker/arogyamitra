@@ -8,8 +8,8 @@
 
   /* Fonts */
   /* Headings: Poppins Medium (500) / Bold (700). Body: Roboto Regular (400). Anything else: sans-serif. */
-  --font-heading: var(--font-poppins), sans-serif;
-  --font-body: var(--font-roboto), sans-serif;
+  --font-heading: var(--font-poppins), var(--font-gujarati), sans-serif;
+  --font-body: var(--font-roboto), var(--font-gujarati), sans-serif;
   --weight-medium: 500;
   --weight-bold: 700;
 

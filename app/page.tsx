@@ -13,63 +13,43 @@ import {
   IconSpeech,
   IconStethoscope,
 } from "@/components/Icons";
+import LangSwitch from "@/components/LangSwitch";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
+import { HOME, pickLang, type HomeStrings } from "@/lib/home-i18n";
 import "./home.css";
 
 export const metadata: Metadata = {
   title: "ArogyaMitra: a health guide, right by your side",
   description:
-    "Understand your health information in Gujarati, Hindi or English and prepare clear summaries for your doctor. Powered by Gemma 4.",
+    "Understand your medical reports and prepare for doctor visits in Gujarati, Hindi or English. Powered by Gemma 4.",
 };
 
-const AUTH_MESSAGES: Record<string, string> = {
-  SessionRequired: "Please sign in with Google to continue.",
-  AccessDenied: "Sign-in was cancelled. You can try again whenever you're ready.",
-  OAuthCallbackError: "Sign-in was cancelled or did not finish. Please try again.",
-  Configuration: "Google sign-in is not set up yet on this server. Please try again later.",
-};
-
-const STEPS = [
-  {
-    Icon: IconSpeech,
-    title: "Share Your Health Concerns",
-    text: "Describe your symptoms or health concerns in your preferred language: Gujarati, Hindi or English.",
-  },
-  {
-    Icon: IconSpark,
-    title: "AI Understands Your Information",
-    text: "Powered by Gemma, ArogyaMitra organises details such as symptoms, duration, age, medicines and allergies, and asks follow-up questions if something important is missing.",
-  },
-  {
-    Icon: IconListCheck,
-    title: "Get a Structured Health Summary",
-    text: "Receive a clear, organised summary of your health concerns that you can review and share with a qualified healthcare professional.",
-  },
-];
+const STEP_ICONS = [IconSpeech, IconSpark, IconListCheck];
 
 /** Product preview built from the demo report, so the hero shows the real thing, not a stock photo. */
-function HeroPreview() {
+function HeroPreview({ h }: { h: HomeStrings }) {
+  const p = h.preview;
   const rows = [
-    { test: "Fasting sugar", value: "312 mg/dL", range: "70–100", status: "High", tone: "check" },
-    { test: "Haemoglobin", value: "10.2 g/dL", range: "13–17", status: "Low", tone: "check" },
-    { test: "Creatinine", value: "1.1 mg/dL", range: "0.7–1.3", status: "Normal", tone: "ok" },
+    { test: p.tests[0], value: "312 mg/dL", range: "70–100", status: p.status.high, tone: "check" },
+    { test: p.tests[1], value: "10.2 g/dL", range: "13–17", status: p.status.low, tone: "check" },
+    { test: p.tests[2], value: "1.1 mg/dL", range: "0.7–1.3", status: p.status.normal, tone: "ok" },
   ];
   return (
     <div className="preview-stage" aria-hidden="true">
       <div className="preview-card">
         <div className="preview-head">
-          <span className="preview-kicker">Lab report · 24 Oct</span>
-          <span className="preview-tag">Sample</span>
+          <span className="preview-kicker">{p.kicker}</span>
+          <span className="preview-tag">{p.tag}</span>
         </div>
-        <p className="preview-summary">Three results are outside the range printed by your lab.</p>
+        <p className="preview-summary">{p.summary}</p>
         <ul className="preview-rows">
           {rows.map((r) => (
             <li key={r.test}>
               <div>
                 <strong>{r.test}</strong>
                 <span>
-                  {r.value} · range {r.range}
+                  {r.value} · {p.range} {r.range}
                 </span>
               </div>
               <em className={`preview-badge preview-${r.tone}`}>{r.status}</em>
@@ -78,26 +58,35 @@ function HeroPreview() {
         </ul>
       </div>
       <div className="preview-bubble">
-        <span className="preview-bubble-label">પ્રશ્ન</span>
+        <span className="preview-bubble-label">{p.question}</span>
         HbA1c નો અર્થ શું છે?
       </div>
       <div className="preview-chip">
-        <IconCheck size={18} /> 6 questions ready for your doctor
+        <IconCheck size={18} /> {p.chip}
       </div>
     </div>
   );
 }
 
-export default async function HomePage({ searchParams }: { searchParams: Promise<{ error?: string }> }) {
-  const { error } = await searchParams;
-  const authMessage = error ? (AUTH_MESSAGES[error] ?? "Sign-in did not complete. Please try again.") : null;
+export default async function HomePage({ searchParams }: { searchParams: Promise<{ error?: string; lang?: string }> }) {
+  const { error, lang: langParam } = await searchParams;
+  const lang = pickLang(langParam);
+  const h = HOME[lang];
+  const authMessage = error ? (h.auth[error as keyof typeof h.auth] ?? h.auth.default) : null;
+
+  const features = [
+    { Icon: IconScan, ...h.features.reports },
+    { Icon: IconQuestion, ...h.features.questions },
+    { Icon: IconDownload, ...h.features.pdf },
+    { Icon: IconLock, ...h.features.privacy },
+  ];
 
   return (
-    <div className="home">
+    <div className="home" lang={lang}>
       <a href="#main" className="skip-link">
         Skip to content
       </a>
-      <SiteHeader />
+      <SiteHeader lang={lang} />
 
       <main id="main">
         <section id="home" className="hero">
@@ -108,59 +97,58 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                   {authMessage}
                 </div>
               )}
-              <p className="eyebrow">ગુજરાતી · हिंदी · English</p>
+              <LangSwitch lang={lang} label={h.langLabel} className="lang-switch-hero" />
               <h1 className="hero-title">
-                A Health Guide, <span className="hero-accent">Right by Your Side!</span>
+                {h.heroTitle1} <span className="hero-accent">{h.heroTitle2}</span>
               </h1>
-              <p className="hero-text">
-                Health information made easier to understand. ArogyaMitra helps you organize your health concerns,
-                understand important medical information and prepare meaningful summaries for healthcare professionals
-                in a language you&apos;re comfortable with.
-              </p>
+              <p className="hero-text">{h.heroText}</p>
               <div className="hero-actions">
-                <GetStarted className="btn btn-accent btn-lg" />
+                <GetStarted className="btn btn-accent btn-lg" label={h.getStarted} lang={lang} />
               </div>
               <p className="hero-note">
-                <IconLock size={16} /> Free · Sign in with Google · Your photos are never stored
+                <IconLock size={16} /> {h.heroNote}
               </p>
             </div>
-            <HeroPreview />
+            <HeroPreview h={h} />
           </div>
         </section>
 
         <section id="how-it-works" className="home-section">
           <div className="home-wrap how-grid">
             <div className="how-intro">
-              <p className="section-kicker">How it works</p>
-              <h2 className="section-heading">How ArogyaMitra Works</h2>
-              <p className="section-sub">Three simple steps to make your healthcare journey easier.</p>
+              <p className="section-kicker">{h.how.kicker}</p>
+              <h2 className="section-heading">{h.how.heading}</h2>
+              <p className="section-sub">{h.how.sub}</p>
             </div>
             <ol className="timeline">
-              {STEPS.map(({ Icon, title, text }, i) => (
-                <li key={title}>
-                  <span className="timeline-num">{String(i + 1).padStart(2, "0")}</span>
-                  <div className="timeline-body">
-                    <h3>
-                      <Icon size={22} className="timeline-icon" /> {title}
-                    </h3>
-                    <p>{text}</p>
-                  </div>
-                </li>
-              ))}
+              {h.how.steps.map((s, i) => {
+                const Icon = STEP_ICONS[i];
+                return (
+                  <li key={s.title}>
+                    <span className="timeline-num">{String(i + 1).padStart(2, "0")}</span>
+                    <div className="timeline-body">
+                      <h3>
+                        <Icon size={22} className="timeline-icon" /> {s.title}
+                      </h3>
+                      <p>{s.text}</p>
+                    </div>
+                  </li>
+                );
+              })}
             </ol>
           </div>
         </section>
 
         <section id="features" className="home-section features-section">
           <div className="home-wrap">
-            <p className="section-kicker">Features</p>
-            <h2 className="section-heading">What Makes ArogyaMitra Helpful?</h2>
+            <p className="section-kicker">{h.features.kicker}</p>
+            <h2 className="section-heading">{h.features.heading}</h2>
             <ul className="feature-list">
               <li className="feature-lead">
                 <IconGlobe className="feature-icon" />
                 <div>
-                  <h3>Multilingual Understanding</h3>
-                  <p>Communicate naturally in Gujarati, Hindi and English.</p>
+                  <h3>{h.features.lang.title}</h3>
+                  <p>{h.features.lang.text}</p>
                   <div className="scripts">
                     <span lang="gu">ખાલી પેટ શુગર સામાન્ય કરતાં વધારે છે.</span>
                     <span lang="hi">खाली पेट शुगर सामान्य से ज़्यादा है।</span>
@@ -168,41 +156,15 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
                   </div>
                 </div>
               </li>
-              <li>
-                <IconScan className="feature-icon" />
-                <div>
-                  <h3>Smart Information Extraction</h3>
-                  <p>Identify and organise symptoms, duration and relevant health details.</p>
-                </div>
-              </li>
-              <li>
-                <IconSpark className="feature-icon" />
-                <div>
-                  <h3>AI-Powered Summaries</h3>
-                  <p>Convert unstructured descriptions into clear, structured summaries.</p>
-                </div>
-              </li>
-              <li>
-                <IconQuestion className="feature-icon" />
-                <div>
-                  <h3>Missing Information Detection</h3>
-                  <p>Ask follow-up questions when important information is missing, like “How long have you had this headache?”</p>
-                </div>
-              </li>
-              <li>
-                <IconDownload className="feature-icon" />
-                <div>
-                  <h3>Doctor-Ready Reports</h3>
-                  <p>Generate downloadable summaries to share with healthcare professionals.</p>
-                </div>
-              </li>
-              <li>
-                <IconLock className="feature-icon" />
-                <div>
-                  <h3>Personal Health Information</h3>
-                  <p>Help you organise the information you provide, kept private to your own Google account.</p>
-                </div>
-              </li>
+              {features.map(({ Icon, title, text }) => (
+                <li key={title}>
+                  <Icon className="feature-icon" />
+                  <div>
+                    <h3>{title}</h3>
+                    <p>{text}</p>
+                  </div>
+                </li>
+              ))}
             </ul>
           </div>
         </section>
@@ -212,12 +174,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             <div className="responsibility">
               <IconShieldHeart size={44} className="responsibility-icon" />
               <div>
-                <h2>Your Health Matters. Professional Care Comes First.</h2>
-                <p>
-                  ArogyaMitra is designed to help people organize and understand their health information. It does not
-                  diagnose medical conditions, prescribe medicines or recommend treatments. Medical decisions should
-                  always be made by qualified healthcare professionals.
-                </p>
+                <h2>{h.safety.heading}</h2>
+                <p>{h.safety.text}</p>
               </div>
             </div>
           </div>
@@ -227,18 +185,15 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
           <div className="home-wrap">
             <div className="final-cta">
               <IconStethoscope size={40} className="final-icon" />
-              <h2>Take the First Step Towards Better Health Understanding.</h2>
-              <p>
-                Share your concerns, organize your information and prepare for a more informed conversation with your
-                healthcare professional.
-              </p>
-              <GetStarted className="btn btn-accent btn-lg" />
+              <h2>{h.final.heading}</h2>
+              <p>{h.final.text}</p>
+              <GetStarted className="btn btn-accent btn-lg" label={h.getStarted} lang={lang} />
             </div>
           </div>
         </section>
       </main>
 
-      <SiteFooter />
+      <SiteFooter lang={lang} />
     </div>
   );
 }
