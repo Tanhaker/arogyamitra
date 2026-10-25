@@ -1,12 +1,17 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_Gujarati, Poppins, Roboto } from "next/font/google";
+import { cookies } from "next/headers";
+import { LANG_COOKIE, pickLang } from "@/lib/lang";
 import { themeInitScript } from "@/lib/theme";
 import "./theme.css";
 import "./globals.css";
+import "./app.css";
 
 export const metadata: Metadata = {
   title: "ArogyaMitra: understand your prescription",
   description: "Photograph a prescription or lab report and understand it in English, Hindi or Gujarati. Powered by Gemma 4.",
+  applicationName: "ArogyaMitra",
+  appleWebApp: { capable: true, title: "ArogyaMitra", statusBarStyle: "default" },
 };
 
 // Self-hosted at build time by next/font (no request to Google from the user's browser).
@@ -35,10 +40,11 @@ export const viewport: Viewport = {
   ],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const lang = pickLang((await cookies()).get(LANG_COOKIE)?.value);
   return (
     // data-theme is set by the init script before paint, so the server and client markup differ on purpose.
-    <html lang="en" className={`${poppins.variable} ${roboto.variable} ${notoGujarati.variable}`} suppressHydrationWarning>
+    <html lang={lang} className={`${poppins.variable} ${roboto.variable} ${notoGujarati.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>

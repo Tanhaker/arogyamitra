@@ -4,13 +4,14 @@ import type { Lang } from "./types";
 const en = {
   nav: { home: "Home", how: "How it works", features: "Features", about: "About" },
   getStarted: "Get started",
+  openDashboard: "Open my dashboard",
   langLabel: "Language",
   themeLight: "Switch to light mode",
   themeDark: "Switch to dark mode",
   heroTitle1: "A health guide,",
   heroTitle2: "right by your side",
   heroText: "Understand your medical reports and prepare for doctor visits, in Gujarati, Hindi or English.",
-  heroNote: "Free · Sign in with Google · Your photos are never stored",
+  heroNote: "Free · Sign in with Google · Photos are never stored. Results are saved only on this device.",
   preview: {
     kicker: "Lab report · 24 Oct",
     tag: "Sample",
@@ -86,13 +87,14 @@ export type HomeStrings = typeof en;
 const hi: HomeStrings = {
   nav: { home: "होम", how: "यह कैसे काम करता है", features: "सुविधाएँ", about: "हमारे बारे में" },
   getStarted: "शुरू करें",
+  openDashboard: "मेरा डैशबोर्ड खोलें",
   langLabel: "भाषा",
   themeLight: "लाइट मोड चालू करें",
   themeDark: "डार्क मोड चालू करें",
   heroTitle1: "सेहत का साथी,",
   heroTitle2: "हमेशा आपके साथ",
   heroText: "अपनी मेडिकल रिपोर्ट समझें और डॉक्टर से मिलने की तैयारी करें, गुजराती, हिंदी या अंग्रेज़ी में।",
-  heroNote: "मुफ़्त · Google से साइन इन करें · आपकी फोटो कभी सेव नहीं होती",
+  heroNote: "मुफ़्त · Google से साइन इन करें · फोटो कभी सेव नहीं होती। नतीजे सिर्फ़ इसी डिवाइस पर सेव होते हैं।",
   preview: {
     kicker: "जाँच रिपोर्ट · 24 अक्टूबर",
     tag: "नमूना",
@@ -166,13 +168,14 @@ const hi: HomeStrings = {
 const gu: HomeStrings = {
   nav: { home: "હોમ", how: "આ કેવી રીતે કામ કરે છે", features: "સુવિધાઓ", about: "અમારા વિશે" },
   getStarted: "શરૂ કરો",
+  openDashboard: "મારું ડેશબોર્ડ ખોલો",
   langLabel: "ભાષા",
   themeLight: "લાઇટ મોડ ચાલુ કરો",
   themeDark: "ડાર્ક મોડ ચાલુ કરો",
   heroTitle1: "આરોગ્યનો સાથી,",
   heroTitle2: "હંમેશા તમારી સાથે",
   heroText: "તમારા મેડિકલ રિપોર્ટ સમજો અને ડૉક્ટરની મુલાકાતની તૈયારી કરો, ગુજરાતી, હિંદી કે અંગ્રેજીમાં.",
-  heroNote: "મફત · Google થી સાઇન ઇન કરો · તમારા ફોટા ક્યારેય સાચવાતા નથી",
+  heroNote: "મફત · Google થી સાઇન ઇન કરો · ફોટા ક્યારેય સાચવાતા નથી. પરિણામો ફક્ત આ ડિવાઇસ પર સચવાય છે.",
   preview: {
     kicker: "લેબ રિપોર્ટ · 24 ઑક્ટોબર",
     tag: "નમૂનો",
@@ -244,8 +247,5 @@ const gu: HomeStrings = {
 };
 
 export const HOME: Record<Lang, HomeStrings> = { en, hi, gu };
-export const LANG_NAMES: Record<Lang, string> = { en: "English", hi: "हिंदी", gu: "ગુજરાતી" };
 
-export function pickLang(v: unknown): Lang {
-  return v === "hi" || v === "gu" ? v : "en";
-}
+export { pickLang } from "./lang";

@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
+import { auth } from "@/auth";
 import GetStarted from "@/components/GetStarted";
 import {
   IconCheck,
@@ -16,7 +18,8 @@ import {
 import LangSwitch from "@/components/LangSwitch";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
-import { HOME, pickLang, type HomeStrings } from "@/lib/home-i18n";
+import { HOME, type HomeStrings } from "@/lib/home-i18n";
+import { LANG_COOKIE, pickLang } from "@/lib/lang";
 import "./home.css";
 
 export const metadata: Metadata = {
@@ -70,7 +73,9 @@ function HeroPreview({ h }: { h: HomeStrings }) {
 
 export default async function HomePage({ searchParams }: { searchParams: Promise<{ error?: string; lang?: string }> }) {
   const { error, lang: langParam } = await searchParams;
-  const lang = pickLang(langParam);
+  // ?lang= wins (the middleware also remembers it in a cookie); otherwise the remembered language.
+  const lang = pickLang(langParam ?? (await cookies()).get(LANG_COOKIE)?.value);
+  const signedIn = Boolean((await auth())?.user);
   const h = HOME[lang];
   const authMessage = error ? (h.auth[error as keyof typeof h.auth] ?? h.auth.default) : null;
 
@@ -86,7 +91,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
       <a href="#main" className="skip-link">
         Skip to content
       </a>
-      <SiteHeader lang={lang} />
+      <SiteHeader lang={lang} signedIn={signedIn} />
 
       <main id="main">
         <section id="home" className="hero">
@@ -103,7 +108,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               </h1>
               <p className="hero-text">{h.heroText}</p>
               <div className="hero-actions">
-                <GetStarted className="btn btn-accent btn-lg" label={h.getStarted} lang={lang} />
+                <GetStarted className="btn btn-accent btn-lg" label={h.getStarted} dashboardLabel={h.openDashboard} lang={lang} signedIn={signedIn} />
               </div>
               <p className="hero-note">
                 <IconLock size={16} /> {h.heroNote}
@@ -187,7 +192,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
               <IconStethoscope size={40} className="final-icon" />
               <h2>{h.final.heading}</h2>
               <p>{h.final.text}</p>
-              <GetStarted className="btn btn-accent btn-lg" label={h.getStarted} lang={lang} />
+              <GetStarted className="btn btn-accent btn-lg" label={h.getStarted} dashboardLabel={h.openDashboard} lang={lang} signedIn={signedIn} />
             </div>
           </div>
         </section>

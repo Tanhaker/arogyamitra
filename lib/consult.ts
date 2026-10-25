@@ -51,7 +51,7 @@ Extra rules for this task:
 - Calm, non-frightening wording.
 - "understood" must contain ONLY what the person actually said (or what is in their report). Never invent or assume. Use "" or [] when not given.
 - If important details are missing (duration, severity, frequency, age, current medicines, allergies), list short follow-up questions TO THE PERSON in "missing_info".
-- URGENT: if they describe possible emergency signs (e.g. chest pain or pressure, trouble breathing, fainting, sudden weakness or numbness on one side, slurred speech, severe bleeding, very high fever with stiff neck or confusion, thoughts of self-harm, severe allergic reaction, seizures, severe sudden headache), set "urgent": true and write "urgent_message" telling them to call 108 or go to the nearest hospital now. Still add a few questions.
+- URGENT: if they describe possible emergency signs (e.g. chest pain or pressure, trouble breathing, fainting, sudden weakness or numbness on one side, slurred speech, severe bleeding, very high fever with stiff neck or confusion, thoughts of self-harm, severe allergic reaction, seizures, severe sudden headache), set "urgent": true and write "urgent_message" telling them to call 112 or go to the nearest hospital now. Still add a few questions.
 
 Reply with ONLY this JSON:
 {
@@ -85,8 +85,8 @@ export function consultUserText(input: ConsultInput, report: Explanation | null)
     const brief = {
       type: report.document_type,
       date: report.report_date,
-      medicines: report.medicines.map((m) => `${m.name} ${m.dose} ${m.when.join("/")}`),
-      results: report.lab_results.map((l) => `${l.test}: ${l.value} (range ${l.normal_range || "not printed"}, ${l.status})`),
+      medicines: report.medicines.map((m) => `${m.name} ${m.dose} ${m.timing.join("/")}`),
+      results: report.lab_results.map((l) => `${l.test}: ${l.value ?? l.value_text ?? ""} ${l.unit} (range ${l.range_text || "not printed"}, ${l.status})`),
     };
     lines.push(`My recent medical paper (already read by the app): ${JSON.stringify(brief)}`);
   }

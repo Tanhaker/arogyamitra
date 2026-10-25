@@ -6,7 +6,7 @@ import LangSwitch from "./LangSwitch";
 import Logo from "./Logo";
 import ThemeToggle from "./ThemeToggle";
 
-export default function SiteHeader({ lang = "en" }: { lang?: Lang }) {
+export default function SiteHeader({ lang = "en", signedIn = false }: { lang?: Lang; signedIn?: boolean }) {
   const h = HOME[lang];
   const q = lang === "en" ? "" : `?lang=${lang}`;
   return (
@@ -24,7 +24,7 @@ export default function SiteHeader({ lang = "en" }: { lang?: Lang }) {
         <div className="site-header-actions">
           <LangSwitch lang={lang} label={h.langLabel} className="lang-switch-header" />
           <ThemeToggle labels={{ light: h.themeLight, dark: h.themeDark }} />
-          <GetStarted className="btn btn-secondary btn-sm" label={h.getStarted} lang={lang} />
+          <GetStarted className="btn btn-secondary btn-sm" label={h.getStarted} dashboardLabel={h.openDashboard} lang={lang} signedIn={signedIn} />
         </div>
       </div>
     </header>

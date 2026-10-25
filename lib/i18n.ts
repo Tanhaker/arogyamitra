@@ -1,3 +1,4 @@
+import { APP_STRINGS, type AppStrings } from "./i18n-app";
 import type { Lang } from "./types";
 
 /** Every word the interface shows. The explanation itself comes from Gemma in the chosen language. */
@@ -105,7 +106,7 @@ const en = {
     newConcern: "Describe another concern",
     printTitle: "My questions for the doctor",
     urgentTitle: "Please get medical help now",
-    urgentDefault: "Some of what you described may need urgent care. Call 108 or go to the nearest hospital now.",
+    urgentDefault: "Some of what you described may need urgent care. Call 112 or go to the nearest hospital now.",
     cats: {
       symptoms: "Understanding my symptoms",
       tests: "Tests and medical reports",
@@ -134,9 +135,10 @@ const en = {
   },
 };
 
-export type Strings = typeof en;
+type BaseStrings = typeof en;
+export type Strings = BaseStrings & AppStrings;
 
-const hi: Strings = {
+const hi: BaseStrings = {
   langName: "हिंदी",
   logout: "लॉग आउट",
   hello: "नमस्ते",
@@ -240,7 +242,7 @@ const hi: Strings = {
     newConcern: "दूसरी परेशानी बताएँ",
     printTitle: "डॉक्टर के लिए मेरे सवाल",
     urgentTitle: "कृपया तुरंत चिकित्सा सहायता लें",
-    urgentDefault: "आपने जो बताया उसमें तुरंत इलाज की ज़रूरत हो सकती है। अभी 108 पर कॉल करें या नज़दीकी अस्पताल जाएँ।",
+    urgentDefault: "आपने जो बताया उसमें तुरंत इलाज की ज़रूरत हो सकती है। अभी 112 पर कॉल करें या नज़दीकी अस्पताल जाएँ।",
     cats: {
       symptoms: "मेरे लक्षणों को समझना",
       tests: "जाँच और रिपोर्ट",
@@ -269,7 +271,7 @@ const hi: Strings = {
   },
 };
 
-const gu: Strings = {
+const gu: BaseStrings = {
   langName: "ગુજરાતી",
   logout: "લૉગ આઉટ",
   hello: "નમસ્તે",
@@ -373,7 +375,7 @@ const gu: Strings = {
     newConcern: "બીજી સમસ્યા જણાવો",
     printTitle: "ડૉક્ટર માટે મારા પ્રશ્નો",
     urgentTitle: "કૃપા કરીને તરત તબીબી મદદ લો",
-    urgentDefault: "તમે જે જણાવ્યું તેમાં તાત્કાલિક સારવારની જરૂર હોઈ શકે. હમણાં જ 108 પર કૉલ કરો અથવા નજીકની હોસ્પિટલમાં જાઓ.",
+    urgentDefault: "તમે જે જણાવ્યું તેમાં તાત્કાલિક સારવારની જરૂર હોઈ શકે. હમણાં જ 112 પર કૉલ કરો અથવા નજીકની હોસ્પિટલમાં જાઓ.",
     cats: {
       symptoms: "મારા લક્ષણો સમજવા",
       tests: "તપાસ અને રિપોર્ટ",
@@ -402,5 +404,9 @@ const gu: Strings = {
   },
 };
 
-export const STRINGS: Record<Lang, Strings> = { en, hi, gu };
+export const STRINGS: Record<Lang, Strings> = {
+  en: { ...en, ...APP_STRINGS.en },
+  hi: { ...hi, ...APP_STRINGS.hi },
+  gu: { ...gu, ...APP_STRINGS.gu },
+};
 export const LANGS: Lang[] = ["en", "hi", "gu"];

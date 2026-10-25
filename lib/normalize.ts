@@ -1,4 +1,8 @@
-import type { Explanation, LabResult, Medicine, TimeOfDay, Warning } from "./types";
+import { applyShorthand } from "./abbreviations";
+import { isCritical } from "./critical";
+import { FLAG_TEXT, withConfirm } from "./safety";
+import type { ParsedExplanation } from "./schema";
+import type { Explanation, LabResult, Lang, Medicine, RedFlag, Schedule, Severity, TimeOfDay } from "./types";
 
 /** Pulls the first JSON object out of model text (tolerates code fences or stray words). */
 export function parseJson(text: string): unknown {
@@ -13,104 +17,154 @@ export function parseJson(text: string): unknown {
   }
 }
 
-const str = (v: unknown): string => (typeof v === "string" ? v.trim() : typeof v === "number" ? String(v) : "");
-const num = (v: unknown): number | null => {
-  if (typeof v === "number" && Number.isFinite(v)) return v;
-  if (typeof v === "string") {
-    const n = parseFloat(v.replace(/,/g, ""));
-    return Number.isFinite(n) ? n : null;
-  }
-  return null;
+const RANK: Record<Severity, number> = { normal: 0, check: 1, urgent: 2 };
+export const worse = (a: Severity, b: Severity): Severity => (RANK[a] >= RANK[b] ? a : b);
+
+/** Common Indian brands -> active ingredients, to catch duplicates the model might miss. */
+const BRANDS: Record<string, string[]> = {
+  dolo: ["paracetamol"],
+  crocin: ["paracetamol"],
+  calpol: ["paracetamol"],
+  pacimol: ["paracetamol"],
+  paracip: ["paracetamol"],
+  sumo: ["paracetamol", "nimesulide"],
+  combiflam: ["ibuprofen", "paracetamol"],
+  brufen: ["ibuprofen"],
+  pan: ["pantoprazole"],
+  pantocid: ["pantoprazole"],
+  pantop: ["pantoprazole"],
+  augmentin: ["amoxicillin", "clavulanate"],
+  mox: ["amoxicillin"],
+  azee: ["azithromycin"],
+  azithral: ["azithromycin"],
+  glycomet: ["metformin"],
+  telma: ["telmisartan"],
+  ecosprin: ["aspirin"],
 };
-const arr = (v: unknown): unknown[] => (Array.isArray(v) ? v : []);
-const pick = <T extends string>(v: unknown, allowed: readonly T[], fallback: T): T =>
-  allowed.includes(v as T) ? (v as T) : fallback;
 
-const TIMES: readonly TimeOfDay[] = ["morning", "afternoon", "night"];
-
-function medicine(v: unknown): Medicine | null {
-  const m = (v ?? {}) as Record<string, unknown>;
-  const name = str(m.name);
-  if (!name) return null;
-  const when = arr(m.when)
-    .map((t) => str(t).toLowerCase())
-    .map((t) => (t === "evening" ? "night" : t))
-    .filter((t): t is TimeOfDay => TIMES.includes(t as TimeOfDay));
-  return {
-    name,
-    purpose: str(m.purpose),
-    dose: str(m.dose),
-    when: TIMES.filter((t) => when.includes(t)),
-    food: pick(m.food, ["before", "after", "with", "any", ""] as const, ""),
-    duration: str(m.duration),
-    notes: str(m.notes),
-    unclear: m.unclear === true,
-  };
-}
-
-function labResult(v: unknown): LabResult | null {
-  const r = (v ?? {}) as Record<string, unknown>;
-  const test = str(r.test);
-  if (!test) return null;
-  const normal_range = str(r.normal_range);
-  const value_num = num(r.value_num);
-  // Safety: never use a reference range the report does not print.
-  const ref_low = normal_range ? num(r.ref_low) : null;
-  const ref_high = normal_range ? num(r.ref_high) : null;
-  const lab_critical = r.lab_critical === true;
-  let status = pick(r.status, ["normal", "high", "low", "critical", "unknown"] as const, "unknown");
-  if (lab_critical) {
-    status = "critical";
-  } else if (status === "critical") {
-    // Safety: "critical" is reserved for values the lab itself marks critical.
-    status =
-      value_num !== null && ref_high !== null && value_num > ref_high ? "high"
-      : value_num !== null && ref_low !== null && value_num < ref_low ? "low"
-      : "unknown";
+function ingredients(m: Medicine): string[] {
+  const out = new Set<string>();
+  for (const part of (m.generic_name ?? "").toLowerCase().split(/[+,/&]| and /)) {
+    const w = part.replace(/[\d.]+\s*(mg|ml|mcg|g|iu)?/g, "").trim();
+    if (w.length > 2) out.add(w);
   }
-  return {
-    test,
-    test_key: str(r.test_key) || test,
-    value: str(r.value),
-    value_num,
-    unit: str(r.unit),
-    normal_range,
-    ref_low,
-    ref_high,
-    lab_critical,
-    status,
-    meaning: str(r.meaning),
-  };
-}
-
-function warning(v: unknown): Warning | null {
-  const w = (v ?? {}) as Record<string, unknown>;
-  const text = str(w.text);
-  return text ? { level: pick(w.level, ["urgent", "check", "info"] as const, "check"), text } : null;
-}
-
-/** Turns whatever the model sent into a safe, complete Explanation the UI can always render. */
-export function normalize(raw: unknown): Explanation {
-  const o = (raw ?? {}) as Record<string, unknown>;
-  const result: Explanation = {
-    document_type: pick(o.document_type, ["prescription", "lab_report", "other"] as const, "other"),
-    report_date: /^\d{4}-\d{2}-\d{2}$/.test(str(o.report_date)) ? str(o.report_date) : "",
-    summary: str(o.summary),
-    medicines: arr(o.medicines).map(medicine).filter((m): m is Medicine => m !== null),
-    lab_results: arr(o.lab_results).map(labResult).filter((r): r is LabResult => r !== null),
-    warnings: arr(o.warnings).map(warning).filter((w): w is Warning => w !== null),
-    doctor_questions: arr(o.doctor_questions).map(str).filter(Boolean),
-    unclear: arr(o.unclear).map(str).filter(Boolean),
-  };
-  // Safety: "urgent" is only for lab-designated critical results, and those must always show one.
-  // Empty text means "use the UI's default urgent message" (it is translated there).
-  const hasCritical = result.lab_results.some((r) => r.status === "critical");
-  if (!hasCritical) {
-    result.warnings = result.warnings.map((w) => (w.level === "urgent" ? { ...w, level: "check" } : w));
-  } else if (!result.warnings.some((w) => w.level === "urgent")) {
-    result.warnings.unshift({ level: "urgent", text: "" });
+  const brand = m.name.toLowerCase().replace(/^(tab|cap|syp|syr|inj)\.?\s*/i, "").split(/\s+/)[0];
+  for (const ing of BRANDS[brand] ?? []) out.add(ing);
+  const plain = m.name.toLowerCase();
+  for (const ing of ["paracetamol", "ibuprofen", "pantoprazole", "amoxicillin", "metformin", "azithromycin", "aspirin"]) {
+    if (plain.includes(ing)) out.add(ing);
   }
-  const order = { urgent: 0, check: 1, info: 2 };
-  result.warnings.sort((a, b) => order[a.level] - order[b.level]);
-  return result;
+  return [...out];
+}
+
+function labSeverity(l: LabResult): Severity {
+  let code: Severity = "normal";
+  if (l.value !== null) {
+    const low = l.ref_low ?? null;
+    const high = l.ref_high ?? null;
+    if ((high !== null && l.value > high) || (low !== null && l.value < low)) code = "check";
+  }
+  if (l.lab_flag || isCritical(`${l.test_key ?? ""} ${l.test}`, l.value, l.unit)) code = "urgent";
+  // The more severe of the model's view and the code's view wins.
+  return worse(l.status, code);
+}
+
+export function buildSchedule(meds: Medicine[]): Schedule {
+  const s: Schedule = { morning: [], afternoon: [], evening: [], night: [] };
+  for (const m of meds) for (const t of m.timing) s[t as TimeOfDay].push(m.name);
+  return s;
+}
+
+function shortTitle(r: { document_type: string; medicines: Medicine[]; lab_results: LabResult[] }): string {
+  if (r.document_type === "lab_report") {
+    const bad = r.lab_results.filter((l) => l.status !== "normal").map((l) => l.test);
+    return bad.slice(0, 3).join(", ") || r.lab_results.slice(0, 2).map((l) => l.test).join(", ");
+  }
+  return r.medicines.slice(0, 3).map((m) => m.name).join(", ");
+}
+
+/** Turns validated model output into the final Explanation, applying every code-side safety rule. */
+export function finalize(p: ParsedExplanation, lang: Lang): Explanation {
+  const medicines: Medicine[] = p.medicines
+    .filter((m) => m.name)
+    .map((m) => applyShorthand({ ...m, generic_name: m.generic_name || undefined, notes: m.notes || undefined }));
+
+  const lab_results: LabResult[] = p.lab_results
+    .filter((l) => l.test)
+    .map((l) => {
+      const range_text = l.range_text;
+      const base: LabResult = {
+        test: l.test,
+        test_key: l.test_key || undefined,
+        value: l.value,
+        value_text: l.value_text || undefined,
+        unit: l.unit,
+        range_text,
+        // Never use a range the report does not print.
+        ref_low: range_text ? (l.ref_low ?? null) : null,
+        ref_high: range_text ? (l.ref_high ?? null) : null,
+        lab_flag: l.lab_flag ?? false,
+        status: l.status,
+        explanation: l.explanation,
+      };
+      return { ...base, status: labSeverity(base) };
+    })
+    .sort((a, b) => RANK[b.status] - RANK[a.status]);
+
+  const anyUrgentLab = lab_results.some((l) => l.status === "urgent");
+  let red_flags: RedFlag[] = p.red_flags
+    .filter((f) => f.text)
+    // "urgent" is reserved for results the code or lab considers urgent.
+    .map((f) => (f.level === "urgent" && !anyUrgentLab ? { ...f, level: "check" as const } : f));
+
+  // Duplicate ingredients across medicines.
+  const seen = new Map<string, string>();
+  for (const m of medicines) {
+    for (const ing of ingredients(m)) {
+      const other = seen.get(ing);
+      if (other && other !== m.name) {
+        const already = red_flags.some((f) => f.text.includes(other) && f.text.includes(m.name));
+        if (!already) red_flags.push({ level: "check", text: FLAG_TEXT.duplicate[lang](other, m.name, ing) });
+      } else if (!other) seen.set(ing, m.name);
+    }
+  }
+
+  // Out-of-range values, unless the model already flagged them.
+  const abnormal = lab_results.filter((l) => l.status !== "normal");
+  if (abnormal.length && !red_flags.some((f) => abnormal.some((l) => f.text.includes(l.test)))) {
+    red_flags.unshift({ level: anyUrgentLab ? "urgent" : "check", text: FLAG_TEXT.outOfRange[lang](abnormal.map((l) => l.test).join(", ")) });
+  }
+
+  // Unreadable parts.
+  const unclear_items = p.unclear_items;
+  const lowConfidence = medicines.filter((m) => m.confidence === "low").length;
+  if ((unclear_items.length || lowConfidence) && !red_flags.some((f) => /unclear|read|पढ़|વાંચ/i.test(f.text))) {
+    red_flags.push({ level: "check", text: FLAG_TEXT.unreadable[lang](unclear_items.length || lowConfidence) });
+  }
+
+  const order = { urgent: 0, check: 1, info: 2 } as const;
+  red_flags = red_flags.map((f) => ({ ...f, text: withConfirm(f.text, lang) })).sort((a, b) => order[a.level] - order[b.level]);
+
+  const date = p.report_date && /^\d{4}-\d{2}-\d{2}$/.test(p.report_date) ? p.report_date : undefined;
+  const out: Explanation = {
+    document_type: p.document_type,
+    title: "",
+    summary: p.summary,
+    report_date: date,
+    medicines,
+    schedule: medicines.length ? buildSchedule(medicines) : { morning: [], afternoon: [], evening: [], night: [] },
+    lab_results,
+    red_flags,
+    doctor_questions: p.doctor_questions.slice(0, 5),
+    unclear_items,
+  };
+  out.title = p.title || shortTitle(out);
+  return out;
+}
+
+export function worstSeverity(r: Explanation): Severity {
+  let s: Severity = "normal";
+  for (const l of r.lab_results) s = worse(s, l.status);
+  for (const f of r.red_flags) s = worse(s, f.level === "urgent" ? "urgent" : f.level === "check" ? "check" : "normal");
+  return s;
 }
