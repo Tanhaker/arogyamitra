@@ -4,9 +4,11 @@
  */
 :root {
   /* Fonts */
-  --font-body: system-ui, -apple-system, "Segoe UI", "Nirmala UI", "Noto Sans", "Noto Sans Devanagari",
-    "Noto Sans Gujarati", Roboto, sans-serif;
-  --font-heading: var(--font-body);
+  /* Headings: Poppins Medium (500) / Bold (700). Body: Roboto Regular (400). Anything else: sans-serif. */
+  --font-heading: var(--font-poppins), sans-serif;
+  --font-body: var(--font-roboto), sans-serif;
+  --weight-medium: 500;
+  --weight-bold: 700;
 
   /* Brand */
   --color-primary: #0f766e;
