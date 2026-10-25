@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { devUser } from "@/lib/devUser";
 import { generateStream, type InputPart, type Turn } from "@/lib/gemma";
 import { chatPrompt } from "@/lib/prompt";
+import { scrub, type SafetyLog } from "@/lib/safety";
 import type { ChatMessage, Explanation, Lang } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -70,12 +71,29 @@ export async function POST(req: Request) {
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
     async start(controller) {
+      // Safety layer on streamed text: hold back the unfinished sentence and release each finished one
+      // only after scrub() has checked it (no diagnosis, no "stop/start/change your medicine").
+      const log: SafetyLog = { removed: 0 };
+      let pending = "";
+      const release = (final: boolean) => {
+        const cut = final ? pending.length : Math.max(...[".", "!", "?", "।", "\n"].map((c) => pending.lastIndexOf(c))) + 1;
+        if (cut <= 0) return;
+        const done = pending.slice(0, cut);
+        pending = pending.slice(cut);
+        const safe = scrub(done, lang, log);
+        if (safe) controller.enqueue(encoder.encode(safe === done ? done : `${safe} `));
+      };
       try {
         for await (const chunk of generateStream(chatPrompt(lang, reportJson), contents, req.signal)) {
           // First event names the model, as a control line the client strips out.
           if (chunk.model) controller.enqueue(encoder.encode(`\u0000model:${chunk.model}\n`));
-          if (chunk.text) controller.enqueue(encoder.encode(chunk.text));
+          if (chunk.text) {
+            pending += chunk.text;
+            release(false);
+          }
         }
+        release(true);
+        if (log.removed) console.warn(`[safety] removed ${log.removed} unsafe sentence(s) from chat`);
       } catch {
         controller.enqueue(encoder.encode("\u0000error\n"));
       } finally {

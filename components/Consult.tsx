@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { IconChat, IconDownload, IconListCheck } from "@/components/Icons";
 import type { CategoryKey, ConsultInput, ConsultResult, Understood } from "@/lib/consult";
+import { isEmergency } from "@/lib/emergency";
 import type { Strings } from "@/lib/i18n";
 import { formatDate } from "@/lib/storage";
 import type { Explanation, Lang } from "@/lib/types";
@@ -16,6 +17,18 @@ interface Q {
 }
 
 const EMPTY: ConsultInput = { concern: "", age: "", medicines: "", allergies: "", extra: [] };
+
+/** Hard-coded emergency card (not model text), shown as soon as the description mentions emergency signs. */
+function EmergencyCard({ t }: { t: Strings }) {
+  const c = t.app.chat;
+  return (
+    <div className="emergency-card" role="alert" style={{ marginBottom: 16 }}>
+      <strong>{c.emergencyTitle}</strong>
+      <p>{c.emergencyText}</p>
+      <a className="btn btn-accent btn-inline" href="tel:112">{c.call}</a>
+    </div>
+  );
+}
 
 /** "Questions to Ask Your Doctor": describe a concern -> Gemma organises it -> personalised questions. */
 export default function Consult({ lang, t, report, onBack }: {
@@ -110,6 +123,7 @@ export default function Consult({ lang, t, report, onBack }: {
     return (
       <>
         <h1 className="page-title">{c.title}</h1>
+        {isEmergency(input.concern) && <EmergencyCard t={t} />}
         {error && (
           <div className="error" role="alert">
             {error}
@@ -166,6 +180,7 @@ export default function Consult({ lang, t, report, onBack }: {
   return (
     <>
       <div className="screen-only">
+        {isEmergency([input.concern, ...input.extra].join(" ")) && <EmergencyCard t={t} />}
         {result.urgent && (
           <section className="card" role="alert">
             <div className="alert alert-urgent">
